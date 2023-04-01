@@ -1,0 +1,76 @@
+<div class="sidebar-item sidebar-header">
+	<div class='sidebar-brand'>
+		<a href="{{site.baseurl}}/index.html">{{ site.title }}</a>
+	</div>
+    
+	<p class="lead">{{ site.description }}</p>
+    <p>
+        <hr>
+        | <a href="https://github.com/{{ site.github_username | cgi_escape | escape }}">github</a> |
+          <a href="https://gitee.com/{{ site.gitee_username | cgi_escape | escape }}">gitee</a> | 
+          <a href="https://github.com/{{ site.github_username | cgi_escape | escape }}">bio</a> |
+          <a href="{{site.baseurl}}/index.html">home</a> |
+        <hr>
+    </p>
+</div>
+
+<!--search-->
+<br/>
+<!-- HTML elements for search -->
+<input type="text" id="search-input" placeholder="search here"  style="min-width: 240px;"/>
+<ul id="results-container"></ul>
+
+<!-- script pointing to jekyll-search.js -->
+<script src="{{ site.baseurl }}/js/simple-jekyll-search.min.js"></script>
+
+<script>
+SimpleJekyllSearch({
+    searchInput: document.getElementById('search-input'),
+    resultsContainer: document.getElementById('results-container'),
+    json: '/search.json',
+    searchResultTemplate: '<li><a href="{url}" title="{desc}">{title}</a></li>',
+    noResultsText: '',
+    limit: 5,
+    fuzzy: false
+  })
+</script>
+<br/>
+
+<div class="sidebar-item sidebar-nav">
+  	<ul class="nav">
+			<li class="nav-title">
+                <a href="{{ site.baseurl }}/categories" style="color: white;"> Categories </a>
+            </li>
+	    {% for category in site.categories %}
+	    <li>
+            <a href="{{ site.baseurl }}/{{ category | first }}.html">
+				<span class="name">{{ category | first }}</span>
+				<span class="badge">{{ category | last | size }}</span>
+	    	</a>
+ 		  </li>
+	    {% endfor %}
+	  </ul>
+</div>
+
+<div class="sidebar-item sidebar-nav">
+    <ul class="nav">
+        <li class="nav-title">links</li>
+        <li><a href="https://www.brendangregg.com/">brendangregg</a></li>
+        <li><a href="https://lwn.net/">lwn</a></li>
+    </ul>
+</div>
+
+<div class="sidebar-item sidebar-nav">
+  <p class="nav-title">NOTE</p>
+  <p class="lead"> Enjoy it.</p>
+</div>
+
+<br>
+<div class="sidebar-item sidebar-nav">
+  <p class="nav-title">RECENT</p>
+  <p class="lead"> Enjoy it.</p>
+</div>
+
+<div class="sidebar-item sidebar-footer">
+	<p>Powered by <a href="https://github.com/jekyll/jekyll">Jekyll</a></p>
+</div>
