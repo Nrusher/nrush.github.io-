@@ -1,1 +1,0 @@
-../sources/articles/jekyll/Create-a-blog-website-based-on-jekyll/Create-a-blog-website-based-on-jekyll.md
