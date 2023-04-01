@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+	<meta charset="utf-8">
+    <link rel="stylesheet" href="/css/syntax.css">
+    <link rel="shortcut icon", href="/sources/images/NR.ico">
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+            inlineMath: [['$','$']]
+            }
+        });
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>    
+</head>
+<title>NR Linux</title>
+  <link href="/css/style.css" rel="stylesheet">
+  <body>
+  	<div class="container"> 
+		<div class="sidebar">
+			<div class="sidebar-item sidebar-header">
+	<div class='sidebar-brand'>
+		<a href="/index.html">NR Linux</a>
+	</div>
+    
+	<p class="lead">Nrush's tech blogs. Focus on linux kernel.</p>
+    <p>
+        <hr>
+        | <a href="https://github.com/nrusher">github</a> |
+          <a href="https://gitee.com/nrush">gitee</a> | 
+          <a href="https://github.com/nrusher">bio</a> |
+          <a href="/index.html">home</a> |
+        <hr>
+    </p>
+</div>
+
+<!--search-->
+<br/>
+<!-- HTML elements for search -->
+<input type="text" id="search-input" placeholder="search here"  style="min-width: 240px;"/>
+<ul id="results-container"></ul>
+
+<!-- script pointing to jekyll-search.js -->
+<script src="/js/simple-jekyll-search.min.js"></script>
+
+<script>
+SimpleJekyllSearch({
+    searchInput: document.getElementById('search-input'),
+    resultsContainer: document.getElementById('results-container'),
+    json: '/search.json',
+    searchResultTemplate: '<li><a href="{url}" title="{desc}">{title}</a></li>',
+    noResultsText: '',
+    limit: 5,
+    fuzzy: false
+  })
+</script>
+<br/>
+
+<div class="sidebar-item sidebar-nav">
+  	<ul class="nav">
+			<li class="nav-title">
+                <a href="/categories" style="color: white;"> Categories </a>
+            </li>
+	    
+	    <li>
+            <a href="/jekyll.html">
+				<span class="name">jekyll</span>
+				<span class="badge">3</span>
+	    	</a>
+ 		  </li>
+	    
+	    <li>
+            <a href="/performance.html">
+				<span class="name">performance</span>
+				<span class="badge">1</span>
+	    	</a>
+ 		  </li>
+	    
+	  </ul>
+</div>
+
+<div class="sidebar-item sidebar-nav">
+    <ul class="nav">
+        <li class="nav-title">links</li>
+        <li><a href="https://www.brendangregg.com/">brendangregg</a></li>
+        <li><a href="https://lwn.net/">lwn</a></li>
+    </ul>
+</div>
+
+<div class="sidebar-item sidebar-nav">
+  <p class="nav-title">NOTE</p>
+  <p class="lead"> Enjoy it.</p>
+</div>
+
+<br>
+<div class="sidebar-item sidebar-nav">
+  <p class="nav-title">RECENT</p>
+  <p class="lead"> Enjoy it.</p>
+</div>
+
+<div class="sidebar-item sidebar-footer">
+	<p>Powered by <a href="https://github.com/jekyll/jekyll">Jekyll</a></p>
+</div>
+
+		</div>
+		<div class="content">
+            <div class="paper">
+                <hr style="height:5px;border:none;border-top:5px double;"/>
+			    <center><strong><font size="6">Create a blog website based on jekyll</font></strong></center>
+
+<ul id="markdown-toc">
+  <li><a href="#1-what-is-jekyll" id="markdown-toc-1-what-is-jekyll">1 What is jekyll?</a></li>
+  <li><a href="#2-a-quick-start-about-how-to-use-jekyll-on-ubuntu-server" id="markdown-toc-2-a-quick-start-about-how-to-use-jekyll-on-ubuntu-server">2 A quick start about how to use jekyll. [on ubuntu server]</a>    <ul>
+      <li><a href="#21-install" id="markdown-toc-21-install">2.1 Install</a></li>
+      <li><a href="#22-view-the-first-jekyll-page-in-local" id="markdown-toc-22-view-the-first-jekyll-page-in-local">2.2 View the first jekyll page in local</a></li>
+    </ul>
+  </li>
+  <li><a href="#3-how-to-publish-the-blog-website-on-the-internet" id="markdown-toc-3-how-to-publish-the-blog-website-on-the-internet">3 how to publish the blog website on the internet?</a></li>
+  <li><a href="#4-some-records-about-how-to-decorate-the-website" id="markdown-toc-4-some-records-about-how-to-decorate-the-website">4 Some records about how to decorate the website</a></li>
+  <li><a href="#41-add-faviconico" id="markdown-toc-41-add-faviconico">4.1 Add favicon.ico</a></li>
+  <li><a href="#42-default-values-of-website" id="markdown-toc-42-default-values-of-website">4.2 Default values of website</a></li>
+</ul>
+
+<p>Good tools are essential to do the job well. This blog is used to record how to use jekyll.</p>
+
+<h2 id="1-what-is-jekyll">1 What is jekyll?</h2>
+
+<p>Jekyll is a tool which can help you create a static blog website fastly and easilly.</p>
+
+<p>Here are some links about jekyll:</p>
+
+<ul>
+  <li>Home page of jekyll: <a href="https://jekyll.com">https://jekyll.com</a></li>
+  <li>Jekyll中文主页: <a href="https://jekyllcn.com">https://jekyllcn.com</a></li>
+  <li>A website where you can find many jekyll themes: <a href="http://jekyllthemes.org">http://jekyllthemes.org</a></li>
+</ul>
+
+<p>Here are some blog websites based on jekyll, they provide good examples</p>
+<ul>
+  <li><a href="http://gohom.win/">http://gohom.win/</a></li>
+</ul>
+
+<h2 id="2-a-quick-start-about-how-to-use-jekyll-on-ubuntu-server">2 A quick start about how to use jekyll. [on ubuntu server]</h2>
+
+<h3 id="21-install">2.1 Install</h3>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Install ruby</span>
+<span class="nb">sudo </span>apt-get <span class="nb">install </span>ruby-full build-essential zlib1g-dev
+
+<span class="nb">echo</span> <span class="s1">'# Install Ruby Gems to ~/gems'</span> <span class="o">&gt;&gt;</span> ~/.bashrc
+<span class="nb">echo</span> <span class="s1">'export GEM_HOME="$HOME/gems"'</span> <span class="o">&gt;&gt;</span> ~/.bashrc
+<span class="nb">echo</span> <span class="s1">'export PATH="$HOME/gems/bin:$PATH"'</span> <span class="o">&gt;&gt;</span> ~/.bashrc
+<span class="nb">source</span> ~/.bashrc
+
+<span class="c"># Change gem's source, you can use `gem sources -l` to see wether the source has been</span>
+<span class="c"># changed sucessfully. This step is not essential. However, if you don't do that, the</span>
+<span class="c"># download speed of gem will be super slow :)</span>
+gem sources <span class="nt">--remove</span> https://rubygems.org/
+<span class="c"># 国内加速源</span>
+gem sources <span class="nt">--add</span> https://mirrors.tuna.tsinghua.edu.cn/rubygems/
+
+<span class="c"># install jekyll and  bundler</span>
+gem <span class="nb">install </span>jekyll bundler
+
+<span class="c"># Change bundle's source. For same reason of changing gem's source.</span>
+<span class="c"># 国内加速源</span>
+bundle config mirror.https://rubygems.org https://mirrors.tuna.tsinghua.edu.cn/rubygems
+</code></pre></div></div>
+
+<h3 id="22-view-the-first-jekyll-page-in-local">2.2 View the first jekyll page in local</h3>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Init jekyll website dir</span>
+jekyll new ~/myblog
+<span class="nb">cd </span>myblog
+<span class="c"># start the serve</span>
+jekyll serve
+<span class="c"># Now browse to http://localhost:4000</span>
+
+<span class="c"># When you want to browse the website on another PC which is in the same</span>
+<span class="c"># LAN as your serve, use following cmd. Then, you can browse to the </span>
+<span class="c"># x.x.x.x:4000 where x.x.x.x is the ip of your serve.</span>
+jekyll serve <span class="nt">-w</span> <span class="nt">--host</span><span class="o">=</span>0.0.0.0
+
+<span class="c"># if want to see drafts, use</span>
+jekyll serve <span class="nt">-w</span> <span class="nt">--host</span><span class="o">=</span>0.0.0.0 <span class="nt">--drafts</span>
+</code></pre></div></div>
+
+<p>OK, now a website is ready. The rest is how to decorate the website, enjoy it!</p>
+
+<h2 id="3-how-to-publish-the-blog-website-on-the-internet">3 how to publish the blog website on the internet?</h2>
+
+<p>There are many ways to publish the website, some are free and some should pay some money.</p>
+
+<p>Free ways:</p>
+<ul>
+  <li>Github pages: <a href="https://pages.github.com/">https://pages.github.com/</a></li>
+  <li>Gitee pages: <a href="https://gitee.com/help/articles/4136">https://gitee.com/help/articles/4136</a></li>
+  <li>The static web hosting service of Coding: <a href="https://coding.net/">https://coding.net/</a></li>
+</ul>
+
+<p>The greatest advantage of <code class="language-plaintext highlighter-rouge">free ways</code> is free, the biggest disadvantage of <code class="language-plaintext highlighter-rouge">paid ways</code> is I must give some money to service provider. OK, for a better browsing experience and saving time, I choose a <code class="language-plaintext highlighter-rouge">paid way</code></p>
+
+<ul>
+  <li>cloudbase: <a href="https://docs.cloudbase.net/hosting/quick-start">https://docs.cloudbase.net/hosting/quick-start</a> [ This is not a advertisement, believe me …… :) ]</li>
+</ul>
+
+<p><strong>step 1</strong>: Buy cloudbase service.</p>
+
+<p><strong>step 2</strong>: enable static web hosting service.</p>
+
+<p><strong>step 3</strong>: Install <code class="language-plaintext highlighter-rouge">tcb</code> on local PC.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>nodejs npm
+npm i <span class="nt">-g</span> @cloudbase/cli
+tcb login <span class="nt">--key</span>
+<span class="nb">cd</span> &lt;website path&gt;
+tcb hosting deploy ./ <span class="nt">-e</span> &lt;envid&gt;
+</code></pre></div></div>
+
+<h2 id="4-some-records-about-how-to-decorate-the-website">4 Some records about how to decorate the website</h2>
+
+<h2 id="41-add-faviconico">4.1 Add favicon.ico</h2>
+
+<p>The error is very annoying, fix it!</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Not Found: /favicon.ico
+</code></pre></div></div>
+<ul>
+  <li>prepare a picture you like (png, jpg …) or use <a href="https://www.logosc.cn/logo/">https://www.logosc.cn/logo/</a> to get one.</li>
+  <li>use <a href="https://www.bitbug.net/">https://www.bitbug.net/</a> create a favicon.ico.</li>
+  <li>add <code class="language-plaintext highlighter-rouge">&lt;link rel="shortcut icon", href="/the/path/of/your/ico"&gt;</code> to the head of html.</li>
+</ul>
+
+<p>OK, the ico has been shown on the tab now.</p>
+
+<h2 id="42-default-values-of-website">4.2 Default values of website</h2>
+
+<p>Set the values in _config.yml</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>defaults:
+  -
+    scope:
+      path: "/_posts/"
+    values:
+      author: Nrush
+</code></pre></div></div>
+
+            </div>
+		</div>
+	</div>
+  </body>
+</html>

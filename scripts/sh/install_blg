@@ -1,0 +1,12 @@
+#!/bin/bash
+SCRIPT_PATH=$(readlink -f "$0")
+SCRIPT_DIR=$(dirname "$SCRIPT_PATH")
+
+BLG_PATH=$SCRIPT_DIR/../exe
+EXPORT_STR='export PATH=$PATH:'$BLG_PATH
+echo $EXPORT_STR
+check_ans=`cat ~/.bashrc | grep $BLG_PATH`
+if [ -z "$check_ans" ]; then
+    echo $EXPORT_STR >> ~/.bashrc
+fi
+source ~/.bashrc

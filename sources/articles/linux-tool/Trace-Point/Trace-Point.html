@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+	<meta charset="utf-8">
+    <link rel="stylesheet" href="/css/syntax.css">
+    <link rel="shortcut icon", href="/sources/images/NR.ico">
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+            inlineMath: [['$','$']]
+            }
+        });
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>    
+</head>
+<title>NR Linux</title>
+  <link href="/css/style.css" rel="stylesheet">
+  <body>
+  	<div class="container"> 
+		<div class="sidebar">
+			<div class="sidebar-item sidebar-header">
+	<div class='sidebar-brand'>
+		<a href="/index.html">NR Linux</a>
+	</div>
+    
+	<p class="lead">Nrush's tech blogs. Focus on linux kernel.</p>
+    <p>
+        <hr>
+        | <a href="https://github.com/nrusher">github</a> |
+          <a href="https://gitee.com/nrush">gitee</a> | 
+          <a href="https://github.com/nrusher">bio</a> |
+          <a href="/index.html">home</a> |
+        <hr>
+    </p>
+</div>
+
+<!--search-->
+<br/>
+<!-- HTML elements for search -->
+<input type="text" id="search-input" placeholder="search here"  style="min-width: 240px;"/>
+<ul id="results-container"></ul>
+
+<!-- script pointing to jekyll-search.js -->
+<script src="/js/simple-jekyll-search.min.js"></script>
+
+<script>
+SimpleJekyllSearch({
+    searchInput: document.getElementById('search-input'),
+    resultsContainer: document.getElementById('results-container'),
+    json: '/search.json',
+    searchResultTemplate: '<li><a href="{url}" title="{desc}">{title}</a></li>',
+    noResultsText: '',
+    limit: 5,
+    fuzzy: false
+  })
+</script>
+<br/>
+
+<div class="sidebar-item sidebar-nav">
+  	<ul class="nav">
+			<li class="nav-title">
+                <a href="/categories" style="color: white;"> Categories </a>
+            </li>
+	    
+	    <li>
+            <a href="/jekyll.html">
+				<span class="name">jekyll</span>
+				<span class="badge">3</span>
+	    	</a>
+ 		  </li>
+	    
+	    <li>
+            <a href="/performance.html">
+				<span class="name">performance</span>
+				<span class="badge">1</span>
+	    	</a>
+ 		  </li>
+	    
+	  </ul>
+</div>
+
+<div class="sidebar-item sidebar-nav">
+    <ul class="nav">
+        <li class="nav-title">links</li>
+        <li><a href="https://www.brendangregg.com/">brendangregg</a></li>
+        <li><a href="https://lwn.net/">lwn</a></li>
+    </ul>
+</div>
+
+<div class="sidebar-item sidebar-nav">
+  <p class="nav-title">NOTE</p>
+  <p class="lead"> Enjoy it.</p>
+</div>
+
+<br>
+<div class="sidebar-item sidebar-nav">
+  <p class="nav-title">RECENT</p>
+  <p class="lead"> Enjoy it.</p>
+</div>
+
+<div class="sidebar-item sidebar-footer">
+	<p>Powered by <a href="https://github.com/jekyll/jekyll">Jekyll</a></p>
+</div>
+
+		</div>
+		<div class="content">
+            <div class="paper">
+                <hr style="height:5px;border:none;border-top:5px double;"/>
+			    <center><h1>Trace Point</h1></center>
+
+<p>trace_xxx在Linux内核中随处可见，从目的上看，这些代码和debug时加入的printk调试代码没有区别，都是采集输出代码上下文信息，以便于分析性能和稳定性问题。和简单粗暴的printk以及自定义的debug函数相比，tracepoint机制提供了一种更为优雅、便捷和强大的静态调试点插入方式。</p>
+
+<h2 id="1-如何使用tracepoint">1. 如何使用tracepoint</h2>
+
+<p>在了解tracepoint实现前，先看一下linux tracepoint和用户的交互机制。所有tracepoint的输出都被存放在trace的ringbuffer中，想要查看这些输出，只需要<code class="language-plaintext highlighter-rouge">cat /sys/kernel/debug/tracing/trace</code>目录即可。当然只有打开特定tracepoint的开关后对应tracepoint才会生效并输出数据。一个完整的使用例子如下</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># step 1 enable a Event</span>
+<span class="nb">echo </span>1 <span class="o">&gt;</span> /sys/kernel/debug/tracing/events/sched/sched_process_fork/enable
+<span class="c"># step 2 enable trace</span>
+<span class="nb">echo </span>1 <span class="o">&gt;</span> /sys/kernel/debug/tracing/tracing_on
+<span class="c"># step 3 read ringbuffer</span>
+<span class="nb">cat</span> <span class="o">&gt;</span> /sys/kernel/debug/tracing/trace
+</code></pre></div></div>
+<p>此时起一个新进程时，trace buffer中会有对应的输出</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># tracer: nop</span>
+<span class="c">#</span>
+<span class="c"># entries-in-buffer/entries-written: 3/3   #P:4</span>
+<span class="c">#</span>
+<span class="c">#                                _-----=&gt; irqs-off</span>
+<span class="c">#                               / _----=&gt; need-resched</span>
+<span class="c">#                              | / _---=&gt; hardirq/softirq</span>
+<span class="c">#                              || / _--=&gt; preempt-depth</span>
+<span class="c">#                              ||| / _-=&gt; migrate-disable</span>
+<span class="c">#                              |||| /     delay</span>
+<span class="c">#           TASK-PID     CPU#  |||||  TIMESTAMP  FUNCTION</span>
+<span class="c">#              | |         |   |||||     |         |</span>
+            bash-54642   <span class="o">[</span>003] ..... 1130406.191897: sched_process_fork: <span class="nb">comm</span><span class="o">=</span>bash <span class="nv">pid</span><span class="o">=</span>54642 <span class="nv">child_comm</span><span class="o">=</span>bash <span class="nv">child_pid</span><span class="o">=</span>54710
+            bash-54642   <span class="o">[</span>002] ..... 1130408.504988: sched_process_fork: <span class="nb">comm</span><span class="o">=</span>bash <span class="nv">pid</span><span class="o">=</span>54642 <span class="nv">child_comm</span><span class="o">=</span>bash <span class="nv">child_pid</span><span class="o">=</span>54711
+            bash-54642   <span class="o">[</span>003] ..... 1130409.677837: sched_process_fork: <span class="nb">comm</span><span class="o">=</span>bash <span class="nv">pid</span><span class="o">=</span>54642 <span class="nv">child_comm</span><span class="o">=</span>bash <span class="nv">child_pid</span><span class="o">=</span>54712
+</code></pre></div></div>
+
+<p>更多trace的使用方式见：<a href="Trace-in-oneline">Trace-in-oneline</a></p>
+
+<h2 id="2-实现原理">2. 实现原理</h2>
+
+<p>根据tracepoint的使用方法，不难想出其底层代码不外乎如下逻辑。</p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">trace_xxx</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">enabled</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">run_trace_function</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>找一个trace函数（<code class="language-plaintext highlighter-rouge">trace_sched_wait_task(p)</code>）验证以上猜想。</p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">trace_sched_wait_task</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+  <span class="o">--&gt;</span> <span class="p">[</span><span class="n">include</span><span class="o">/</span><span class="n">trace</span><span class="o">/</span><span class="n">events</span><span class="o">/</span><span class="n">sched</span><span class="p">.</span><span class="n">h</span><span class="p">]</span>
+      <span class="n">DEFINE_EVENT</span><span class="p">(</span><span class="n">sched_process_template</span><span class="p">,</span> 
+                   <span class="n">sched_wait_task</span><span class="p">,</span>
+                   <span class="n">TP_PROTO</span><span class="p">(</span><span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="n">p</span><span class="p">),</span>
+                   <span class="n">TP_ARGS</span><span class="p">(</span><span class="n">p</span><span class="p">));</span> 
+      
+  <span class="o">--&gt;</span> <span class="p">[</span><span class="n">include</span><span class="o">/</span><span class="n">linux</span><span class="o">/</span><span class="n">tracepoint</span><span class="p">.</span><span class="n">h</span><span class="p">]</span>
+      <span class="cp">#define DEFINE_EVENT(template, name, proto, args)           \
+              DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+</span>              <span class="p">[</span><span class="n">include</span><span class="o">/</span><span class="n">trace</span><span class="o">/</span><span class="n">events</span><span class="o">/</span><span class="n">sched</span><span class="p">.</span><span class="n">h</span><span class="p">]</span>
+
+  <span class="o">--&gt;</span> <span class="p">[</span><span class="n">include</span><span class="o">/</span><span class="n">linux</span><span class="o">/</span><span class="n">tracepoint</span><span class="p">.</span><span class="n">h</span><span class="p">]</span>
+      <span class="cp">#define DECLARE_TRACE(name, proto, args)                    \
+              __DECLARE_TRACE(name, PARAMS(proto), PARAMS(args),  \
+                        cpu_online(raw_smp_processor_id()),       \
+                        PARAMS(void *__data, proto))
+</span></code></pre></div></div>
+<p>展开__DECLARE_TRACE可得</p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">__DECLARE_TRACE</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="n">sched_wait_task</span><span class="p">,</span>
+                <span class="n">proto</span> <span class="o">=</span> <span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="n">p</span><span class="p">,</span>
+                <span class="n">args</span> <span class="o">=</span> <span class="n">p</span><span class="p">,</span>
+                <span class="n">cond</span> <span class="o">=</span> <span class="n">cpu_online</span><span class="p">(</span><span class="n">raw_smp_processor_id</span><span class="p">()),</span>
+                <span class="n">data_proto</span> <span class="o">=</span> <span class="kt">void</span> <span class="o">*</span><span class="n">__data</span><span class="p">,</span> <span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="n">p</span><span class="p">)</span>
+
+<span class="k">extern</span> <span class="kt">int</span> <span class="nf">__traceiter_sched_wait_task</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">__data</span><span class="p">,</span> <span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="n">p</span><span class="p">);</span>                      
+<span class="n">DECLARE_STATIC_CALL</span><span class="p">(</span><span class="n">tp_func_sched_wait_task</span><span class="p">,</span> <span class="n">__traceiter_sched_wait_task</span><span class="p">);</span>
+<span class="k">extern</span> <span class="k">struct</span> <span class="n">tracepoint</span> <span class="n">__tracepoint_sched_wait_task</span><span class="p">;</span>                   
+<span class="k">static</span> <span class="kr">inline</span> <span class="kt">void</span> <span class="nf">trace_sched_wait_task</span><span class="p">(</span><span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="n">p</span><span class="p">)</span>                          
+<span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">static_key_false</span><span class="p">(</span><span class="o">&amp;</span><span class="n">__tracepoint_sched_wait_task</span><span class="p">.</span><span class="n">key</span><span class="p">))</span> <span class="p">{</span>        
+                <span class="cm">/* __DO_TRACE(sched_wait_task, p, cpu_online(raw_smp_processor_id()), 0); */</span>
+                <span class="kt">int</span> <span class="n">__maybe_unused</span> <span class="n">__idx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+                                             
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">cpu_online</span><span class="p">(</span><span class="n">raw_smp_processor_id</span><span class="p">())))</span>                 
+                        <span class="k">return</span><span class="p">;</span>              
+                                             
+                <span class="cm">/* srcu can't be used from NMI */</span>                       
+                <span class="n">WARN_ON_ONCE</span><span class="p">(</span><span class="n">rcuidle</span> <span class="o">&amp;&amp;</span> <span class="n">in_nmi</span><span class="p">());</span>                      
+ 
+                <span class="cm">/* keep srcu and sched-rcu usage consistent */</span>          
+                <span class="n">preempt_disable_notrace</span><span class="p">();</span>   
+                                             
+                <span class="cm">/*                           
+                 * For rcuidle callers, use srcu since sched-rcu        
+                 * doesn't work from the idle path.                     
+                 */</span>                          
+                <span class="k">if</span> <span class="p">(</span><span class="n">rcuidle</span><span class="p">)</span> <span class="p">{</span>               
+                        <span class="n">__idx</span> <span class="o">=</span> <span class="n">srcu_read_lock_notrace</span><span class="p">(</span><span class="o">&amp;</span><span class="n">tracepoint_srcu</span><span class="p">);</span>
+                        <span class="n">ct_irq_enter_irqson</span><span class="p">();</span>                          
+                <span class="p">}</span>                            
+                                             
+                <span class="cm">/* __DO_TRACE_CALL(sched_wait_task, p); */</span>                                      
+                <span class="k">struct</span> <span class="n">tracepoint_func</span> <span class="o">*</span><span class="n">it_func_ptr</span><span class="p">;</span>                    
+                <span class="kt">void</span> <span class="o">*</span><span class="n">__data</span><span class="p">;</span>                                           
+                <span class="n">it_func_ptr</span> <span class="o">=</span> <span class="n">rcu_dereference_raw</span><span class="p">((</span><span class="o">&amp;</span><span class="n">__tracepoint_sched_wait_task</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">funcs</span><span class="p">);</span> 
+                <span class="k">if</span> <span class="p">(</span><span class="n">it_func_ptr</span><span class="p">)</span> <span class="p">{</span>                                      
+                        <span class="n">__data</span> <span class="o">=</span> <span class="p">(</span><span class="n">it_func_ptr</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">;</span>                   
+                        <span class="n">static_call</span><span class="p">(</span><span class="n">tp_func_sched_wait_task</span><span class="p">)(</span><span class="n">__data</span><span class="p">,</span> <span class="n">p</span><span class="p">);</span>      
+                <span class="p">}</span>                                                       
+                  
+                <span class="k">if</span> <span class="p">(</span><span class="n">rcuidle</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="n">ct_irq_exit_irqson</span><span class="p">();</span>
+                        <span class="n">srcu_read_unlock_notrace</span><span class="p">(</span><span class="o">&amp;</span><span class="n">tracepoint_srcu</span><span class="p">,</span> <span class="n">__idx</span><span class="p">);</span>
+                <span class="p">}</span>                            
+                                            
+                <span class="n">preempt_enable_notrace</span><span class="p">();</span>    
+        <span class="p">}</span>                
+        <span class="k">if</span> <span class="p">(</span><span class="n">IS_ENABLED</span><span class="p">(</span><span class="n">CONFIG_LOCKDEP</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">cpu_online</span><span class="p">(</span><span class="n">raw_smp_processor_id</span><span class="p">())))</span> <span class="p">{</span>             
+                <span class="n">rcu_read_lock_sched_notrace</span><span class="p">();</span>                  
+                <span class="n">rcu_dereference_sched</span><span class="p">(</span><span class="n">__tracepoint_sched_wait_task</span><span class="p">.</span><span class="n">funcs</span><span class="p">);</span>
+                <span class="n">rcu_read_unlock_sched_notrace</span><span class="p">();</span>                
+        <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">__DECLARE_TRACE_RCU</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="n">p</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">cpu_online</span><span class="p">(</span><span class="n">raw_smp_processor_id</span><span class="p">()))</span>
+<span class="k">static</span> <span class="kr">inline</span> <span class="kt">int</span>                                               
+<span class="nf">register_trace_sched_wait_task</span><span class="p">(</span><span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">probe</span><span class="p">)(</span><span class="kt">void</span> <span class="o">*</span><span class="n">__data</span><span class="p">,</span> <span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="n">p</span><span class="p">),</span> <span class="kt">void</span> <span class="o">*</span><span class="n">data</span><span class="p">)</span>    
+<span class="p">{</span>
+        <span class="k">return</span> <span class="n">tracepoint_probe_register</span><span class="p">(</span><span class="o">&amp;</span><span class="n">__tracepoint_sched_wait_task</span><span class="p">,</span>  
+                                        <span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="p">)</span><span class="n">probe</span><span class="p">,</span> <span class="n">data</span><span class="p">);</span>   
+<span class="p">}</span>
+<span class="k">static</span> <span class="kr">inline</span> <span class="kt">int</span>                                               
+<span class="nf">register_trace_prio_sched_wait_task</span><span class="p">(</span><span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">probe</span><span class="p">)(</span><span class="kt">void</span> <span class="o">*</span><span class="n">__data</span><span class="p">,</span> <span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="n">p</span><span class="p">),</span> <span class="kt">void</span> <span class="o">*</span><span class="n">data</span><span class="p">,</span>
+                          <span class="kt">int</span> <span class="n">prio</span><span class="p">)</span>                            
+<span class="p">{</span>
+        <span class="k">return</span> <span class="n">tracepoint_probe_register_prio</span><span class="p">(</span><span class="o">&amp;</span><span class="n">__tracepoint_sched_wait_task</span><span class="p">,</span> 
+                                    <span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="p">)</span><span class="n">probe</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">prio</span><span class="p">);</span> 
+<span class="p">}</span>
+<span class="k">static</span> <span class="kr">inline</span> <span class="kt">int</span>                                               
+<span class="nf">unregister_trace_sched_wait_task</span><span class="p">(</span><span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">probe</span><span class="p">)(</span><span class="kt">void</span> <span class="o">*</span><span class="n">__data</span><span class="p">,</span> <span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="n">p</span><span class="p">),</span> <span class="kt">void</span> <span class="o">*</span><span class="n">data</span><span class="p">)</span>  
+<span class="p">{</span>
+        <span class="k">return</span> <span class="n">tracepoint_probe_unregister</span><span class="p">(</span><span class="o">&amp;</span><span class="n">__tracepoint_sched_wait_task</span><span class="p">,</span>
+                                        <span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="p">)</span><span class="n">probe</span><span class="p">,</span> <span class="n">data</span><span class="p">);</span>   
+<span class="p">}</span>
+<span class="k">static</span> <span class="kr">inline</span> <span class="kt">void</span>                                              
+<span class="nf">check_trace_callback_type_sched_wait_task</span><span class="p">(</span><span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">cb</span><span class="p">)(</span><span class="kt">void</span> <span class="o">*</span><span class="n">__data</span><span class="p">,</span> <span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="n">p</span><span class="p">))</span>        
+<span class="p">{</span>
+<span class="p">}</span>
+<span class="k">static</span> <span class="kr">inline</span> <span class="n">bool</span>                                              
+<span class="nf">trace_sched_wait_task_enabled</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>                                    
+<span class="p">{</span>
+        <span class="k">return</span> <span class="n">static_key_false</span><span class="p">(</span><span class="o">&amp;</span><span class="n">__tracepoint_sched_wait_task</span><span class="p">.</span><span class="n">key</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>从展开的结果看，其的确如之前推测，linux采用了如下格式来定义一个trace点</p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">static</span> <span class="kr">inline</span> <span class="kt">void</span> <span class="nf">trace_sched_wait_task</span><span class="p">(</span><span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+  <span class="p">....</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">static_key_false</span><span class="p">(</span><span class="o">&amp;</span><span class="n">__tracepoint_sched_wait_task</span><span class="p">.</span><span class="n">key</span><span class="p">))</span> <span class="p">{</span>
+      <span class="cm">/* do trace */</span>
+      <span class="p">.....</span>
+  <span class="p">}</span>
+  <span class="p">....</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>但还有一些疑问，展开后，部分函数和变量只有声明却没有定义,如</p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">extern</span> <span class="kt">int</span> <span class="nf">__traceiter_sched_wait_task</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">__data</span><span class="p">,</span> <span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="n">p</span><span class="p">);</span>                      
+<span class="k">extern</span> <span class="k">struct</span> <span class="n">tracepoint</span> <span class="n">__tracepoint_sched_wait_task</span><span class="p">;</span> 
+</code></pre></div></div>
+<p><code class="language-plaintext highlighter-rouge">include/trace/events/sched.h</code>如何做到使用一个宏既完成了函数定义又完成了相关声明的呢？这里内核使用了一个非常有技巧的宏定义方法，让同一个宏<code class="language-plaintext highlighter-rouge">DEFINE_EVENT</code>在特殊文件中会被展开成两次不同的定义。</p>
+
+<p>还是以<code class="language-plaintext highlighter-rouge">sched_wait_task</code>为例，在<code class="language-plaintext highlighter-rouge">kernel/sched/core.c</code>include
+<code class="language-plaintext highlighter-rouge">trace/events/sched.h</code>时，其会在引用前额外定义<code class="language-plaintext highlighter-rouge">CREATE_TRACE_POINTS</code>，这就是展开两次的trick点。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">kernel</span><span class="o">/</span><span class="n">sched</span><span class="o">/</span><span class="n">core</span><span class="p">.</span><span class="n">c</span>
+<span class="o">-------------------------------------</span>
+<span class="cp">#define CREATE_TRACE_POINTS
+#include</span> <span class="cpf">&lt;linux/sched/rseq_api.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;trace/events/sched.h&gt;</span><span class="cp">
+#undef CREATE_TRACE_POINTS
+</span></code></pre></div></div>
+
+<p>但编译器编译到上述的include时，会先根据按tracepoint.h中的定义将<code class="language-plaintext highlighter-rouge">DEFINE_EVENT</code>映射成<code class="language-plaintext highlighter-rouge">DECLARE_TRACE</code>宏，这相当于展开了tracepoint的声明部分。注意，其include了define_trace.h，且是在<code class="language-plaintext highlighter-rouge">_TRACE_SCHED_H</code>宏保护范围之外的，这一点非常重要。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">include</span><span class="o">/</span><span class="n">trace</span><span class="o">/</span><span class="n">events</span><span class="o">/</span><span class="n">sched</span><span class="p">.</span><span class="n">h</span>
+<span class="o">-------------------------------------------</span>
+<span class="cp">#undef TRACE_SYSTEM
+#define TRACE_SYSTEM sched 
+#if !defined(_TRACE_SCHED_H) || defined(TRACE_HEADER_MULTI_READ)
+#define _TRACE_SCHED_H
+</span>
+<span class="cp">#include</span> <span class="cpf">&lt;linux/tracepoint.h&gt;</span><span class="cp">
+</span><span class="p">...</span>
+<span class="n">DEFINE_EVENT</span><span class="p">(</span><span class="n">sched_process_template</span><span class="p">,</span> 
+                   <span class="n">sched_wait_task</span><span class="p">,</span>
+                   <span class="n">TP_PROTO</span><span class="p">(</span><span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="n">p</span><span class="p">),</span>
+                   <span class="n">TP_ARGS</span><span class="p">(</span><span class="n">p</span><span class="p">));</span>
+<span class="p">...</span>
+<span class="cp">#endif
+#include</span> <span class="cpf">&lt;trace/define_trace.h&gt;</span><span class="c1"> </span><span class="cp">
+</span></code></pre></div></div>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">include</span><span class="o">/</span><span class="n">linux</span><span class="o">/</span><span class="n">tracepoint</span><span class="p">.</span><span class="n">h</span>
+<span class="o">------------------------------------------------------------------------</span>
+<span class="p">...</span>
+<span class="cp">#define DEFINE_TRACE_FN(_name, _reg, _unreg, proto, args)               \
+         static const char __tpstrtab_##_name[]                          \
+         __section("__tracepoints_strings") = #_name;                    \
+         extern struct static_call_key STATIC_CALL_KEY(tp_func_##_name); \
+         int __traceiter_##_name(void *__data, proto);                   \
+         struct tracepoint __tracepoint_##_name  __used                  \
+         __section("__tracepoints") = {                                  \
+                 .name = __tpstrtab_##_name,                             \
+                 .key = STATIC_KEY_INIT_FALSE,                           \
+                 .static_call_key = &amp;STATIC_CALL_KEY(tp_func_##_name),   \
+                 .static_call_tramp = STATIC_CALL_TRAMP_ADDR(tp_func_##_name), \
+                 .iterator = &amp;__traceiter_##_name,                       \
+                 .regfunc = _reg,                                        \
+                 .unregfunc = _unreg,                                    \
+                 .funcs = NULL };                                        \
+         __TRACEPOINT_ENTRY(_name);                                      \
+         int __traceiter_##_name(void *__data, proto)                    \
+         {                                                               \
+                 struct tracepoint_func *it_func_ptr;                    \
+                 void *it_func;                                          \
+                                                                         \
+                 it_func_ptr =                                           \
+                         rcu_dereference_raw((&amp;__tracepoint_##_name)-&gt;funcs); \
+                 if (it_func_ptr) {                                      \
+                         do {                                            \
+                                 it_func = READ_ONCE((it_func_ptr)-&gt;func); \                                                       
+</span>                                 <span class="n">__data</span> <span class="o">=</span> <span class="p">(</span><span class="n">it_func_ptr</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">;</span>           \
+                                 <span class="p">((</span><span class="kt">void</span><span class="p">(</span><span class="o">*</span><span class="p">)(</span><span class="kt">void</span> <span class="o">*</span><span class="p">,</span> <span class="n">proto</span><span class="p">))(</span><span class="n">it_func</span><span class="p">))(</span><span class="n">__data</span><span class="p">,</span> <span class="n">args</span><span class="p">);</span> \
+                         <span class="err">}</span> <span class="k">while</span> <span class="p">((</span><span class="o">++</span><span class="n">it_func_ptr</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">func</span><span class="p">);</span>                \
+                 <span class="err">}</span>                                                       \
+                 <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>                                               \
+         <span class="err">}</span>                                                               \
+         <span class="n">DEFINE_STATIC_CALL</span><span class="p">(</span><span class="n">tp_func_</span><span class="err">##</span><span class="n">_name</span><span class="p">,</span> <span class="n">__traceiter_</span><span class="err">##</span><span class="n">_name</span><span class="p">);</span>
+
+<span class="cp">#define DEFINE_TRACE(name, proto, args)         \
+        DEFINE_TRACE_FN(name, NULL, NULL, PARAMS(proto), PARAMS(args));
+</span><span class="p">...</span>
+
+<span class="cp">#ifndef TRACE_EVENT
+#define DEFINE_EVENT(template, name, proto, args)       \
+        DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+#endif
+</span><span class="p">...</span>
+</code></pre></div></div>
+
+<p>在define_trace.h中，其会会先undef <code class="language-plaintext highlighter-rouge">DEFINE_EVENT</code>， 然后将其映射成<code class="language-plaintext highlighter-rouge">DEFINE_TRACE</code>，同时会再include一次<code class="language-plaintext highlighter-rouge">trace/events/sched.h</code>，这次include会将<code class="language-plaintext highlighter-rouge">trace/events/sched.h</code>中的<code class="language-plaintext highlighter-rouge">DEFINE_EVENT</code>按<code class="language-plaintext highlighter-rouge">DEFINE_TRACE</code>，既会生成变量的定义部分，这便完成了一个宏定义既声明又定义的操作。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">include</span><span class="o">/</span><span class="n">trace</span><span class="o">/</span><span class="n">define_trace</span><span class="p">.</span><span class="n">h</span>
+<span class="o">-------------------------------------------------------</span>
+<span class="cp">#ifdef CREATE_TRACE_POINTS        
+</span><span class="cm">/* Prevent recursion */</span>     
+<span class="cp">#undef CREATE_TRACE_POINTS
+</span><span class="p">...</span>
+
+<span class="cp">#undef DEFINE_EVENT
+#define DEFINE_EVENT(template, name, proto, args) \
+        DEFINE_TRACE(name, PARAMS(proto), PARAMS(args))
+</span>
+<span class="cp">#define TRACE_HEADER_MULTI_READ
+</span><span class="p">...</span>
+<span class="cm">/* TRACE_INCLUDE(system) ===&gt; #include &lt;include/trace/events/system.h&gt; */</span>
+<span class="cp">#include TRACE_INCLUDE(TRACE_INCLUDE_FILE)
+</span><span class="p">...</span>
+<span class="cp">#undef TRACE_HEADER_MULTI_READ
+</span>
+<span class="cp">#define CREATE_TRACE_POINTS
+#endif
+</span></code></pre></div></div>
+
+<p>每个<code class="language-plaintext highlighter-rouge">trace/events/xx.h</code>在所有代码中只会有一次在include之前添加<code class="language-plaintext highlighter-rouge">CREATE_TRACE_POINTS</code>，其余引用按正常头文件引用，这意味着定义部分只会被展开一次，进而避免了重复定义的问题。</p>
+
+<p>一个定义完成两件事这个trick的核心点就在于让一个头文件中的内容展开两次，且以不同的定义展开。这个trick虽然并不是tracepoint的核心点，但由于非常有趣，还是在这里记上一笔。</p>
+
+<p>观察<code class="language-plaintext highlighter-rouge">__traceiter_xxx</code>宏函数展开，很容易发现，linux tracepoint执行的tracepoint函数并非是静态单一的，它是动态多个的。</p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="n">__traceiter_</span><span class="err">##</span><span class="n">_name</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">__data</span><span class="p">,</span> <span class="n">proto</span><span class="p">)</span>                    \
+<span class="p">{</span>                                                               \
+        <span class="k">struct</span> <span class="n">tracepoint_func</span> <span class="o">*</span><span class="n">it_func_ptr</span><span class="p">;</span>                    \
+        <span class="kt">void</span> <span class="o">*</span><span class="n">it_func</span><span class="p">;</span>                                          \
+                                                                \
+        <span class="n">it_func_ptr</span> <span class="o">=</span>                                           \
+                <span class="n">rcu_dereference_raw</span><span class="p">((</span><span class="o">&amp;</span><span class="n">__tracepoint_</span><span class="err">##</span><span class="n">_name</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">funcs</span><span class="p">);</span> \
+        <span class="k">if</span> <span class="p">(</span><span class="n">it_func_ptr</span><span class="p">)</span> <span class="p">{</span>                                      \
+                <span class="k">do</span> <span class="p">{</span>                                            \
+                        <span class="n">it_func</span> <span class="o">=</span> <span class="n">READ_ONCE</span><span class="p">((</span><span class="n">it_func_ptr</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">func</span><span class="p">);</span> <span class="err">\</span>                                                       
+                        <span class="n">__data</span> <span class="o">=</span> <span class="p">(</span><span class="n">it_func_ptr</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">;</span>           \
+                        <span class="p">((</span><span class="kt">void</span><span class="p">(</span><span class="o">*</span><span class="p">)(</span><span class="kt">void</span> <span class="o">*</span><span class="p">,</span> <span class="n">proto</span><span class="p">))(</span><span class="n">it_func</span><span class="p">))(</span><span class="n">__data</span><span class="p">,</span> <span class="n">args</span><span class="p">);</span> \
+                <span class="p">}</span> <span class="k">while</span> <span class="p">((</span><span class="o">++</span><span class="n">it_func_ptr</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">func</span><span class="p">);</span>                \
+        <span class="p">}</span>                                                       \
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>                                               \
+<span class="p">}</span>                                                               \
+</code></pre></div></div>
+<p>如何做到动态多个呢？<code class="language-plaintext highlighter-rouge">funcs</code>是一个函数指针数组，理论上可以指向任意一组需要执行的函数。这一点非常重要，这使得tracepoint可以作为bpf、ftrace等各种linux的调试跟踪机制的事件源。</p>
+
+<h2 id="3-总结">3 总结</h2>
+
+<p>tracepoint与传统printk加debug log的静态调试点的比较
+优势</p>
+<ul>
+  <li>代码集中规范，便于代码管理。</li>
+  <li>用户态可以灵活控制tracepoint是否生效。</li>
+  <li>trace函数动态可配，便于满足不同trace的需求。</li>
+</ul>
+
+<p>劣势</p>
+<ul>
+  <li>需要额外占用一部份内存</li>
+</ul>
+
+            </div>
+		</div>
+	</div>
+  </body>
+</html>

@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator><link href="http://0.0.0.0:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://0.0.0.0:4000/" rel="alternate" type="text/html" /><updated>2023-04-01T22:01:26+08:00</updated><id>http://0.0.0.0:4000/feed.xml</id><title type="html">NR Linux</title><subtitle>Nrush&apos;s tech blogs. Focus on linux kernel.</subtitle><entry><title type="html">iowait</title><link href="http://0.0.0.0:4000/iowait" rel="alternate" type="text/html" title="iowait" /><published>2023-04-01T00:00:00+08:00</published><updated>2023-04-01T00:00:00+08:00</updated><id>http://0.0.0.0:4000/iowait</id><content type="html" xml:base="http://0.0.0.0:4000/iowait"><![CDATA[<center><strong><font size="6">iowait</font></strong></center>
+
+<ul id="markdown-toc">
+  <li><a href="#1-定义" id="markdown-toc-1-定义">1 定义</a></li>
+  <li><a href="#2-计算原理" id="markdown-toc-2-计算原理">2 计算原理</a></li>
+  <li><a href="#3-实际使用" id="markdown-toc-3-实际使用">3 实际使用</a></li>
+</ul>
+
+<h2 id="1-定义">1 定义</h2>
+
+<p><code class="language-plaintext highlighter-rouge">man sar</code>可以看到iowait的定义</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Percentage of time that the CPU or CPUs were idle during which the system  had  an  out‐standing disk I/O request.
+</code></pre></div></div>
+
+<h2 id="2-计算原理">2 计算原理</h2>
+
+<p>iowait是cpu idle情况下等io所消耗时间占的百分比。<strong><u>iowait高不代表系统一定存在io性能瓶颈，iowait低也不一定代表系统没有io性能瓶颈, 这个指标仅仅反应的是cpu的一种空闲状态</u></strong>。</p>
+
+<center>
+<table width="90%">
+    <tbody align="center">
+        <tr>
+            <td><img src="/sources/images/iowait-20.svg" width="350" /></td>
+            <td><img src="/sources/images/iowait-40.svg" width="350" /></td>
+        </tr>
+        <tr>
+            <td>(1) iowait-20%</td>
+            <td>(2) iowait-40%</td>
+        </tr>
+    </tbody>
+</table>
+</center>
+
+<p>如上图(1)、(2)所示系统的IO压力并未变化，但iowait却高了一倍。</p>
+
+<h2 id="3-实际使用">3 实际使用</h2>
+
+<p>如果出现iowait高的情况，还是有必要去确认一下系统的io是否正常的，因为IO阻塞导致系统挂起线程过多，进而表现为iowait高的情况是存在的。总结下来这并不是一个十分可信的值。</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>iowait (since Linux 2.5.41)
+      (5) Time waiting for I/O to complete.  This
+      value is not reliable, for the following
+      reasons:
+       1. The CPU will not wait for I/O to
+         complete; iowait is the time that a task
+         is waiting for I/O to complete.  When a
+         CPU goes into idle state for outstanding
+         task I/O, another task will be scheduled
+         on this CPU.
+       2. On a multi-core CPU, the task waiting for
+         I/O to complete is not running on any
+         CPU, so the iowait of each CPU is
+         difficult to calculate.
+       3. The value in this field may decrease in
+         certain conditions.
+</code></pre></div></div>
+<p>遇到iowait偏高是需要借助<code class="language-plaintext highlighter-rouge">sar -d 1</code>等工具，查看await、aqu-sz、util等io指标进一步确认是否的确存在io问题。</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    DEV       tps     rkB/s     wkB/s     dkB/s   areq-sz    aqu-sz     await     %util
+  loop0      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+  loop1      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+  loop2      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+  loop3      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+  loop4      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+mmcblk0      1.59      0.13      9.54      1.04      6.73      0.02     12.61      0.42
+</code></pre></div></div>]]></content><author><name>Nrush</name></author><category term="performance" /><summary type="html"><![CDATA[iowait]]></summary></entry><entry><title type="html">Tool Box</title><link href="http://0.0.0.0:4000/Tool-Box" rel="alternate" type="text/html" title="Tool Box" /><published>2023-03-12T00:00:00+08:00</published><updated>2023-03-12T00:00:00+08:00</updated><id>http://0.0.0.0:4000/Tool-Box</id><content type="html" xml:base="http://0.0.0.0:4000/Tool-Box"><![CDATA[<center><h1>Tool Box</h1></center>
+
+<p>This page is used to record some useful tools I used to write blogs.</p>
+
+<ul>
+  <li>WaveDrom:  A Free online digital timing diagram (waveform) rendering engine.<br />
+github: <a href="https://github.com/wavedrom/wavedrom.github.io/releases">https://github.com/wavedrom/wavedrom.github.io/releases</a><br />
+online: <a href="https://wavedrom.com/editor.html">https://wavedrom.com/editor.html</a></li>
+  <li>drawio: <a href="https://github.com/jgraph/drawio-desktop/releases/">https://github.com/jgraph/drawio-desktop/releases/</a></li>
+  <li>chatgpt: A powerful AI!!!!<br />
+https://chat.openai.com/</li>
+  <li>
+    <p>snakeviz: A python performance analysis tools<br />
+https://jiffyclub.github.io/snakeviz/</p>
+  </li>
+  <li>https://www.hezibuluo.com/154557.html</li>
+</ul>]]></content><author><name>Nrush</name></author><category term="jekyll" /><summary type="html"><![CDATA[Tool Box This page is used to record some useful tools I used to write blogs. WaveDrom: A Free online digital timing diagram (waveform) rendering engine. github: https://github.com/wavedrom/wavedrom.github.io/releases online: https://wavedrom.com/editor.html drawio: https://github.com/jgraph/drawio-desktop/releases/ chatgpt: A powerful AI!!!! https://chat.openai.com/ snakeviz: A python performance analysis tools https://jiffyclub.github.io/snakeviz/ https://www.hezibuluo.com/154557.html]]></summary></entry><entry><title type="html">Create a blog website based on jekyll</title><link href="http://0.0.0.0:4000/Create-a-blog-website-based-on-jekyll" rel="alternate" type="text/html" title="Create a blog website based on jekyll" /><published>2023-02-28T00:00:00+08:00</published><updated>2023-02-28T00:00:00+08:00</updated><id>http://0.0.0.0:4000/Create-a-blog-website-based-on-jekyll</id><content type="html" xml:base="http://0.0.0.0:4000/Create-a-blog-website-based-on-jekyll"><![CDATA[<center><strong><font size="6">Create a blog website based on jekyll</font></strong></center>
+
+<ul id="markdown-toc">
+  <li><a href="#1-what-is-jekyll" id="markdown-toc-1-what-is-jekyll">1 What is jekyll?</a></li>
+  <li><a href="#2-a-quick-start-about-how-to-use-jekyll-on-ubuntu-server" id="markdown-toc-2-a-quick-start-about-how-to-use-jekyll-on-ubuntu-server">2 A quick start about how to use jekyll. [on ubuntu server]</a>    <ul>
+      <li><a href="#21-install" id="markdown-toc-21-install">2.1 Install</a></li>
+      <li><a href="#22-view-the-first-jekyll-page-in-local" id="markdown-toc-22-view-the-first-jekyll-page-in-local">2.2 View the first jekyll page in local</a></li>
+    </ul>
+  </li>
+  <li><a href="#3-how-to-publish-the-blog-website-on-the-internet" id="markdown-toc-3-how-to-publish-the-blog-website-on-the-internet">3 how to publish the blog website on the internet?</a></li>
+  <li><a href="#4-some-records-about-how-to-decorate-the-website" id="markdown-toc-4-some-records-about-how-to-decorate-the-website">4 Some records about how to decorate the website</a></li>
+  <li><a href="#41-add-faviconico" id="markdown-toc-41-add-faviconico">4.1 Add favicon.ico</a></li>
+  <li><a href="#42-default-values-of-website" id="markdown-toc-42-default-values-of-website">4.2 Default values of website</a></li>
+</ul>
+
+<p>Good tools are essential to do the job well. This blog is used to record how to use jekyll.</p>
+
+<h2 id="1-what-is-jekyll">1 What is jekyll?</h2>
+
+<p>Jekyll is a tool which can help you create a static blog website fastly and easilly.</p>
+
+<p>Here are some links about jekyll:</p>
+
+<ul>
+  <li>Home page of jekyll: <a href="https://jekyll.com">https://jekyll.com</a></li>
+  <li>Jekyll中文主页: <a href="https://jekyllcn.com">https://jekyllcn.com</a></li>
+  <li>A website where you can find many jekyll themes: <a href="http://jekyllthemes.org">http://jekyllthemes.org</a></li>
+</ul>
+
+<p>Here are some blog websites based on jekyll, they provide good examples</p>
+<ul>
+  <li><a href="http://gohom.win/">http://gohom.win/</a></li>
+</ul>
+
+<h2 id="2-a-quick-start-about-how-to-use-jekyll-on-ubuntu-server">2 A quick start about how to use jekyll. [on ubuntu server]</h2>
+
+<h3 id="21-install">2.1 Install</h3>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Install ruby</span>
+<span class="nb">sudo </span>apt-get <span class="nb">install </span>ruby-full build-essential zlib1g-dev
+
+<span class="nb">echo</span> <span class="s1">'# Install Ruby Gems to ~/gems'</span> <span class="o">&gt;&gt;</span> ~/.bashrc
+<span class="nb">echo</span> <span class="s1">'export GEM_HOME="$HOME/gems"'</span> <span class="o">&gt;&gt;</span> ~/.bashrc
+<span class="nb">echo</span> <span class="s1">'export PATH="$HOME/gems/bin:$PATH"'</span> <span class="o">&gt;&gt;</span> ~/.bashrc
+<span class="nb">source</span> ~/.bashrc
+
+<span class="c"># Change gem's source, you can use `gem sources -l` to see wether the source has been</span>
+<span class="c"># changed sucessfully. This step is not essential. However, if you don't do that, the</span>
+<span class="c"># download speed of gem will be super slow :)</span>
+gem sources <span class="nt">--remove</span> https://rubygems.org/
+<span class="c"># 国内加速源</span>
+gem sources <span class="nt">--add</span> https://mirrors.tuna.tsinghua.edu.cn/rubygems/
+
+<span class="c"># install jekyll and  bundler</span>
+gem <span class="nb">install </span>jekyll bundler
+
+<span class="c"># Change bundle's source. For same reason of changing gem's source.</span>
+<span class="c"># 国内加速源</span>
+bundle config mirror.https://rubygems.org https://mirrors.tuna.tsinghua.edu.cn/rubygems
+</code></pre></div></div>
+
+<h3 id="22-view-the-first-jekyll-page-in-local">2.2 View the first jekyll page in local</h3>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Init jekyll website dir</span>
+jekyll new ~/myblog
+<span class="nb">cd </span>myblog
+<span class="c"># start the serve</span>
+jekyll serve
+<span class="c"># Now browse to http://localhost:4000</span>
+
+<span class="c"># When you want to browse the website on another PC which is in the same</span>
+<span class="c"># LAN as your serve, use following cmd. Then, you can browse to the </span>
+<span class="c"># x.x.x.x:4000 where x.x.x.x is the ip of your serve.</span>
+jekyll serve <span class="nt">-w</span> <span class="nt">--host</span><span class="o">=</span>0.0.0.0
+
+<span class="c"># if want to see drafts, use</span>
+jekyll serve <span class="nt">-w</span> <span class="nt">--host</span><span class="o">=</span>0.0.0.0 <span class="nt">--drafts</span>
+</code></pre></div></div>
+
+<p>OK, now a website is ready. The rest is how to decorate the website, enjoy it!</p>
+
+<h2 id="3-how-to-publish-the-blog-website-on-the-internet">3 how to publish the blog website on the internet?</h2>
+
+<p>There are many ways to publish the website, some are free and some should pay some money.</p>
+
+<p>Free ways:</p>
+<ul>
+  <li>Github pages: <a href="https://pages.github.com/">https://pages.github.com/</a></li>
+  <li>Gitee pages: <a href="https://gitee.com/help/articles/4136">https://gitee.com/help/articles/4136</a></li>
+  <li>The static web hosting service of Coding: <a href="https://coding.net/">https://coding.net/</a></li>
+</ul>
+
+<p>The greatest advantage of <code class="language-plaintext highlighter-rouge">free ways</code> is free, the biggest disadvantage of <code class="language-plaintext highlighter-rouge">paid ways</code> is I must give some money to service provider. OK, for a better browsing experience and saving time, I choose a <code class="language-plaintext highlighter-rouge">paid way</code></p>
+
+<ul>
+  <li>cloudbase: <a href="https://docs.cloudbase.net/hosting/quick-start">https://docs.cloudbase.net/hosting/quick-start</a> [ This is not a advertisement, believe me …… :) ]</li>
+</ul>
+
+<p><strong>step 1</strong>: Buy cloudbase service.</p>
+
+<p><strong>step 2</strong>: enable static web hosting service.</p>
+
+<p><strong>step 3</strong>: Install <code class="language-plaintext highlighter-rouge">tcb</code> on local PC.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>nodejs npm
+npm i <span class="nt">-g</span> @cloudbase/cli
+tcb login <span class="nt">--key</span>
+<span class="nb">cd</span> &lt;website path&gt;
+tcb hosting deploy ./ <span class="nt">-e</span> &lt;envid&gt;
+</code></pre></div></div>
+
+<h2 id="4-some-records-about-how-to-decorate-the-website">4 Some records about how to decorate the website</h2>
+
+<h2 id="41-add-faviconico">4.1 Add favicon.ico</h2>
+
+<p>The error is very annoying, fix it!</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Not Found: /favicon.ico
+</code></pre></div></div>
+<ul>
+  <li>prepare a picture you like (png, jpg …) or use <a href="https://www.logosc.cn/logo/">https://www.logosc.cn/logo/</a> to get one.</li>
+  <li>use <a href="https://www.bitbug.net/">https://www.bitbug.net/</a> create a favicon.ico.</li>
+  <li>add <code class="language-plaintext highlighter-rouge">&lt;link rel="shortcut icon", href="/the/path/of/your/ico"&gt;</code> to the head of html.</li>
+</ul>
+
+<p>OK, the ico has been shown on the tab now.</p>
+
+<h2 id="42-default-values-of-website">4.2 Default values of website</h2>
+
+<p>Set the values in _config.yml</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>defaults:
+  -
+    scope:
+      path: "/_posts/"
+    values:
+      author: Nrush
+</code></pre></div></div>]]></content><author><name>Nrush</name></author><category term="jekyll" /><summary type="html"><![CDATA[Create a blog website based on jekyll 1 What is jekyll? 2 A quick start about how to use jekyll. [on ubuntu server] 2.1 Install 2.2 View the first jekyll page in local 3 how to publish the blog website on the internet? 4 Some records about how to decorate the website 4.1 Add favicon.ico 4.2 Default values of website Good tools are essential to do the job well. This blog is used to record how to use jekyll. 1 What is jekyll? Jekyll is a tool which can help you create a static blog website fastly and easilly. Here are some links about jekyll: Home page of jekyll: https://jekyll.com Jekyll中文主页: https://jekyllcn.com A website where you can find many jekyll themes: http://jekyllthemes.org Here are some blog websites based on jekyll, they provide good examples http://gohom.win/ 2 A quick start about how to use jekyll. [on ubuntu server] 2.1 Install # Install ruby sudo apt-get install ruby-full build-essential zlib1g-dev echo '# Install Ruby Gems to ~/gems' &gt;&gt; ~/.bashrc echo 'export GEM_HOME="$HOME/gems"' &gt;&gt; ~/.bashrc echo 'export PATH="$HOME/gems/bin:$PATH"' &gt;&gt; ~/.bashrc source ~/.bashrc # Change gem's source, you can use `gem sources -l` to see wether the source has been # changed sucessfully. This step is not essential. However, if you don't do that, the # download speed of gem will be super slow :) gem sources --remove https://rubygems.org/ # 国内加速源 gem sources --add https://mirrors.tuna.tsinghua.edu.cn/rubygems/ # install jekyll and bundler gem install jekyll bundler # Change bundle's source. For same reason of changing gem's source. # 国内加速源 bundle config mirror.https://rubygems.org https://mirrors.tuna.tsinghua.edu.cn/rubygems 2.2 View the first jekyll page in local # Init jekyll website dir jekyll new ~/myblog cd myblog # start the serve jekyll serve # Now browse to http://localhost:4000 # When you want to browse the website on another PC which is in the same # LAN as your serve, use following cmd. Then, you can browse to the # x.x.x.x:4000 where x.x.x.x is the ip of your serve. jekyll serve -w --host=0.0.0.0 # if want to see drafts, use jekyll serve -w --host=0.0.0.0 --drafts OK, now a website is ready. The rest is how to decorate the website, enjoy it! 3 how to publish the blog website on the internet? There are many ways to publish the website, some are free and some should pay some money. Free ways: Github pages: https://pages.github.com/ Gitee pages: https://gitee.com/help/articles/4136 The static web hosting service of Coding: https://coding.net/ The greatest advantage of free ways is free, the biggest disadvantage of paid ways is I must give some money to service provider. OK, for a better browsing experience and saving time, I choose a paid way cloudbase: https://docs.cloudbase.net/hosting/quick-start [ This is not a advertisement, believe me …… :) ] step 1: Buy cloudbase service. step 2: enable static web hosting service. step 3: Install tcb on local PC. apt install nodejs npm npm i -g @cloudbase/cli tcb login --key cd &lt;website path&gt; tcb hosting deploy ./ -e &lt;envid&gt; 4 Some records about how to decorate the website 4.1 Add favicon.ico The error is very annoying, fix it! Not Found: /favicon.ico prepare a picture you like (png, jpg …) or use https://www.logosc.cn/logo/ to get one. use https://www.bitbug.net/ create a favicon.ico. add &lt;link rel="shortcut icon", href="/the/path/of/your/ico"&gt; to the head of html. OK, the ico has been shown on the tab now. 4.2 Default values of website Set the values in _config.yml defaults: - scope: path: "/_posts/" values: author: Nrush]]></summary></entry><entry><title type="html">Jekyll Test</title><link href="http://0.0.0.0:4000/Jekyll-Test" rel="alternate" type="text/html" title="Jekyll Test" /><published>2023-02-28T00:00:00+08:00</published><updated>2023-02-28T00:00:00+08:00</updated><id>http://0.0.0.0:4000/Jekyll-Test</id><content type="html" xml:base="http://0.0.0.0:4000/Jekyll-Test"><![CDATA[<p><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#1-text" id="markdown-toc-1-text">1 Text</a>    <ul>
+      <li><a href="#11--中文" id="markdown-toc-11--中文">1.1  中文</a></li>
+      <li><a href="#12--english" id="markdown-toc-12--english">1.2  English</a></li>
+      <li><a href="#13--blockquotes" id="markdown-toc-13--blockquotes">1.3  blockquotes</a></li>
+      <li><a href="#14-emoji" id="markdown-toc-14-emoji">1.4 emoji</a></li>
+    </ul>
+  </li>
+  <li><a href="#2-code" id="markdown-toc-2-code">2 Code</a></li>
+  <li><a href="#3-math" id="markdown-toc-3-math">3 Math</a></li>
+  <li><a href="#4-image" id="markdown-toc-4-image">4 Image</a></li>
+  <li><a href="#5-video" id="markdown-toc-5-video">5 Video</a></li>
+  <li><a href="#6-url" id="markdown-toc-6-url">6 url</a></li>
+  <li><a href="#7-download" id="markdown-toc-7-download">7 download</a></li>
+  <li><a href="#pdf-viewer" id="markdown-toc-pdf-viewer">Pdf Viewer</a></li>
+</ul>
+
+<p>I have been play with jekyll for a week. And this is my First jekyll blog. Best wish to my blog website! 🖤</p>
+
+<h2 id="1-text">1 Text</h2>
+
+<h3 id="11--中文">1.1  中文</h3>
+<p>这个博客用来测试jekyll的特性。</p>
+
+<h3 id="12--english">1.2  English</h3>
+<p>This blog is used to test jekyll’s features.</p>
+
+<h3 id="13--blockquotes">1.3  blockquotes</h3>
+<blockquote>
+  <p>hello</p>
+</blockquote>
+
+<h3 id="14-emoji">1.4 emoji</h3>
+<p><a href="http://www.unicode.org/charts/">http://www.unicode.org/charts/</a>必须是10进制数
+©
+੩
+🖤</p>
+
+<h2 id="2-code">2 Code</h2>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"hello world"</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo </span>hello world!
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">os</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="s">"hello world!"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="3-math">3 Math</h2>
+<pre><code class="language-math">a + b
+</code></pre>
+
+\[\begin{align*}
+  &amp; \phi(x,y) = \phi \left(\sum_{i=1}^n x_ie_i, \sum_{j=1}^n y_je_j \right)
+  = \sum_{i=1}^n \sum_{j=1}^n x_i y_j \phi(e_i, e_j) = \\
+  &amp; (x_1, \ldots, x_n) \left( \begin{array}{ccc}
+      \phi(e_1, e_1) &amp; \cdots &amp; \phi(e_1, e_n) \\
+      \vdots &amp; \ddots &amp; \vdots \\
+      \phi(e_n, e_1) &amp; \cdots &amp; \phi(e_n, e_n)
+    \end{array} \right)
+  \left( \begin{array}{c}
+      y_1 \\
+      \vdots \\
+      y_n
+    \end{array} \right)
+\end{align*}\]
+
+\[A + B\]
+
+<h2 id="4-image">4 Image</h2>
+
+<center><img src="/sources/images/test.jpg" alt="test_img" width="650" /></center>
+
+<h2 id="5-video">5 Video</h2>
+<center>
+<video width="320" height="240" controls="">
+  <source src="https://www.runoob.com/try/demo_source/movie.mp4" type="video/mp4" />
+  <source src="https://www.runoob.com/try/demo_source/movie.mp4" type="video/ogg" />
+  您的浏览器不支持 HTML5 video 标签。
+</video>
+</center>
+
+<h2 id="6-url">6 url</h2>
+<p><a href="Jekyll-Test">Jekyll Test</a></p>
+
+<h2 id="7-download">7 download</h2>
+<p><a href="/sources/images/test.jpg" download="test.jpg">点击下载</a></p>
+
+<h2 id="pdf-viewer">Pdf Viewer</h2>
+
+<center><embed src="/sources//pdf/devicetree-specification-v0.3-rc2.pdf" width="750px" height="1500px" /></center>]]></content><author><name>Nrush</name></author><category term="jekyll" /><summary type="html"><![CDATA[Table of Contents 1 Text 1.1 中文 1.2 English 1.3 blockquotes 1.4 emoji 2 Code 3 Math 4 Image 5 Video 6 url 7 download Pdf Viewer I have been play with jekyll for a week. And this is my First jekyll blog. Best wish to my blog website! 🖤 1 Text 1.1 中文 这个博客用来测试jekyll的特性。 1.2 English This blog is used to test jekyll’s features. 1.3 blockquotes hello 1.4 emoji http://www.unicode.org/charts/必须是10进制数 © ੩ 🖤 2 Code #include &lt;stdio.h&gt; int main(void) { printf("hello world"); } echo hello world! import os print("hello world!") 3 Math a + b \[\begin{align*} &amp; \phi(x,y) = \phi \left(\sum_{i=1}^n x_ie_i, \sum_{j=1}^n y_je_j \right) = \sum_{i=1}^n \sum_{j=1}^n x_i y_j \phi(e_i, e_j) = \\ &amp; (x_1, \ldots, x_n) \left( \begin{array}{ccc} \phi(e_1, e_1) &amp; \cdots &amp; \phi(e_1, e_n) \\ \vdots &amp; \ddots &amp; \vdots \\ \phi(e_n, e_1) &amp; \cdots &amp; \phi(e_n, e_n) \end{array} \right) \left( \begin{array}{c} y_1 \\ \vdots \\ y_n \end{array} \right) \end{align*}\] \[A + B\] 4 Image 5 Video 您的浏览器不支持 HTML5 video 标签。 6 url Jekyll Test 7 download 点击下载 Pdf Viewer]]></summary></entry><entry><title type="html">categories</title><link href="http://0.0.0.0:4000/categories" rel="alternate" type="text/html" title="categories" /><published>1996-01-01T00:00:00+08:00</published><updated>1996-01-01T00:00:00+08:00</updated><id>http://0.0.0.0:4000/categories</id><content type="html" xml:base="http://0.0.0.0:4000/categories"><![CDATA[<h1 style="font-size: 150%;">jekyll (3)</h1>
+    <a name="jekyll"></a>
+    <ul>
+    
+      <li><a href="/Tool-Box">Tool Box</a></li>
+    
+      <li><a href="/Jekyll-Test">Jekyll Test</a></li>
+    
+      <li><a href="/Create-a-blog-website-based-on-jekyll">Create a blog website based on jekyll</a></li>
+    
+    </ul>
+
+    
+    <h1 style="font-size: 150%;">performance (1)</h1>
+    <a name="performance"></a>
+    <ul>
+    
+      <li><a href="/iowait">iowait</a></li>
+    
+    </ul>]]></content><author><name></name></author><summary type="html"><![CDATA[jekyll (3) Tool Box Jekyll Test Create a blog website based on jekyll performance (1) iowait]]></summary></entry><entry><title type="html">jekyll</title><link href="http://0.0.0.0:4000/jekyll" rel="alternate" type="text/html" title="jekyll" /><published>1996-01-01T00:00:00+08:00</published><updated>1996-01-01T00:00:00+08:00</updated><id>http://0.0.0.0:4000/jekyll</id><content type="html" xml:base="http://0.0.0.0:4000/jekyll"><![CDATA[<h1 style="font-size: 150%;">jekyll</h1>
+        <a name="jekyll"></a>
+        <ul>
+        
+            <li><a href="/Tool-Box">Tool Box</a></li>
+        
+            <li><a href="/Jekyll-Test">Jekyll Test</a></li>
+        
+            <li><a href="/Create-a-blog-website-based-on-jekyll">Create a blog website based on jekyll</a></li>
+        
+        </ul>]]></content><author><name></name></author><summary type="html"><![CDATA[jekyll Tool Box Jekyll Test Create a blog website based on jekyll]]></summary></entry><entry><title type="html">performance</title><link href="http://0.0.0.0:4000/performance" rel="alternate" type="text/html" title="performance" /><published>1996-01-01T00:00:00+08:00</published><updated>1996-01-01T00:00:00+08:00</updated><id>http://0.0.0.0:4000/performance</id><content type="html" xml:base="http://0.0.0.0:4000/performance"><![CDATA[<h1 style="font-size: 150%;">performance</h1>
+        <a name="performance"></a>
+        <ul>
+        
+            <li><a href="/iowait">iowait</a></li>
+        
+        </ul>]]></content><author><name></name></author><summary type="html"><![CDATA[performance iowait]]></summary></entry></feed>

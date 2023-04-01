@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+	<meta charset="utf-8">
+    <link rel="stylesheet" href="/css/syntax.css">
+    <link rel="shortcut icon", href="/sources/images/NR.ico">
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+            inlineMath: [['$','$']]
+            }
+        });
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>    
+</head>
+<title>NR Linux</title>
+  <link href="/css/style.css" rel="stylesheet">
+  <body>
+  	<div class="container"> 
+		<div class="sidebar">
+			<div class="sidebar-item sidebar-header">
+	<div class='sidebar-brand'>
+		<a href="/index.html">NR Linux</a>
+	</div>
+    
+	<p class="lead">Nrush's tech blogs. Focus on linux kernel.</p>
+    <p>
+        <hr>
+        | <a href="https://github.com/nrusher">github</a> |
+          <a href="https://gitee.com/nrush">gitee</a> | 
+          <a href="https://github.com/nrusher">bio</a> |
+          <a href="/index.html">home</a> |
+        <hr>
+    </p>
+</div>
+
+<!--search-->
+<br/>
+<!-- HTML elements for search -->
+<input type="text" id="search-input" placeholder="search here"  style="min-width: 240px;"/>
+<ul id="results-container"></ul>
+
+<!-- script pointing to jekyll-search.js -->
+<script src="/js/simple-jekyll-search.min.js"></script>
+
+<script>
+SimpleJekyllSearch({
+    searchInput: document.getElementById('search-input'),
+    resultsContainer: document.getElementById('results-container'),
+    json: '/search.json',
+    searchResultTemplate: '<li><a href="{url}" title="{desc}">{title}</a></li>',
+    noResultsText: '',
+    limit: 5,
+    fuzzy: false
+  })
+</script>
+<br/>
+
+<div class="sidebar-item sidebar-nav">
+  	<ul class="nav">
+			<li class="nav-title">
+                <a href="/categories" style="color: white;"> Categories </a>
+            </li>
+	    
+	    <li>
+            <a href="/jekyll.html">
+				<span class="name">jekyll</span>
+				<span class="badge">3</span>
+	    	</a>
+ 		  </li>
+	    
+	    <li>
+            <a href="/performance.html">
+				<span class="name">performance</span>
+				<span class="badge">1</span>
+	    	</a>
+ 		  </li>
+	    
+	  </ul>
+</div>
+
+<div class="sidebar-item sidebar-nav">
+    <ul class="nav">
+        <li class="nav-title">links</li>
+        <li><a href="https://www.brendangregg.com/">brendangregg</a></li>
+        <li><a href="https://lwn.net/">lwn</a></li>
+    </ul>
+</div>
+
+<div class="sidebar-item sidebar-nav">
+  <p class="nav-title">NOTE</p>
+  <p class="lead"> Enjoy it.</p>
+</div>
+
+<br>
+<div class="sidebar-item sidebar-nav">
+  <p class="nav-title">RECENT</p>
+  <p class="lead"> Enjoy it.</p>
+</div>
+
+<div class="sidebar-item sidebar-footer">
+	<p>Powered by <a href="https://github.com/jekyll/jekyll">Jekyll</a></p>
+</div>
+
+		</div>
+		<div class="content">
+            <div class="paper">
+                <hr style="height:5px;border:none;border-top:5px double;"/>
+			    <center><strong><font size="6">iowait</font></strong></center>
+
+<ul id="markdown-toc">
+  <li><a href="#1-定义" id="markdown-toc-1-定义">1 定义</a></li>
+  <li><a href="#2-计算原理" id="markdown-toc-2-计算原理">2 计算原理</a></li>
+  <li><a href="#3-实际使用" id="markdown-toc-3-实际使用">3 实际使用</a></li>
+</ul>
+
+<h2 id="1-定义">1 定义</h2>
+
+<p><code class="language-plaintext highlighter-rouge">man sar</code>可以看到iowait的定义</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Percentage of time that the CPU or CPUs were idle during which the system  had  an  out‐standing disk I/O request.
+</code></pre></div></div>
+
+<h2 id="2-计算原理">2 计算原理</h2>
+
+<p>iowait是cpu idle情况下等io所消耗时间占的百分比。<strong><u>iowait高不代表系统一定存在io性能瓶颈，iowait低也不一定代表系统没有io性能瓶颈, 这个指标仅仅反应的是cpu的一种空闲状态</u></strong>。</p>
+
+<center>
+<table width="90%">
+    <tbody align="center">
+        <tr>
+            <td><img src="/sources/images/iowait-20.svg" width="350" /></td>
+            <td><img src="/sources/images/iowait-40.svg" width="350" /></td>
+        </tr>
+        <tr>
+            <td>(1) iowait-20%</td>
+            <td>(2) iowait-40%</td>
+        </tr>
+    </tbody>
+</table>
+</center>
+
+<p>如上图(1)、(2)所示系统的IO压力并未变化，但iowait却高了一倍。</p>
+
+<h2 id="3-实际使用">3 实际使用</h2>
+
+<p>如果出现iowait高的情况，还是有必要去确认一下系统的io是否正常的，因为IO阻塞导致系统挂起线程过多，进而表现为iowait高的情况是存在的。总结下来这并不是一个十分可信的值。</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>iowait (since Linux 2.5.41)
+      (5) Time waiting for I/O to complete.  This
+      value is not reliable, for the following
+      reasons:
+       1. The CPU will not wait for I/O to
+         complete; iowait is the time that a task
+         is waiting for I/O to complete.  When a
+         CPU goes into idle state for outstanding
+         task I/O, another task will be scheduled
+         on this CPU.
+       2. On a multi-core CPU, the task waiting for
+         I/O to complete is not running on any
+         CPU, so the iowait of each CPU is
+         difficult to calculate.
+       3. The value in this field may decrease in
+         certain conditions.
+</code></pre></div></div>
+<p>遇到iowait偏高是需要借助<code class="language-plaintext highlighter-rouge">sar -d 1</code>等工具，查看await、aqu-sz、util等io指标进一步确认是否的确存在io问题。</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    DEV       tps     rkB/s     wkB/s     dkB/s   areq-sz    aqu-sz     await     %util
+  loop0      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+  loop1      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+  loop2      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+  loop3      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+  loop4      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+mmcblk0      1.59      0.13      9.54      1.04      6.73      0.02     12.61      0.42
+</code></pre></div></div>
+
+            </div>
+		</div>
+	</div>
+  </body>
+</html>

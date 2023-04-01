@@ -106,32 +106,21 @@ SimpleJekyllSearch({
 		<div class="content">
             <div class="paper">
                 <hr style="height:5px;border:none;border-top:5px double;"/>
-			    <p>Welcome to my blog! If you want to communicate with me, please use github </p>
+			    <center><h1>Trace in one line</h1></center>
 
-<hr>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># enable/disable trace out</span>
+<span class="nb">echo </span>1 <span class="o">&gt;</span> /sys/kernel/debug/tracing/tracing_on
+<span class="nb">echo </span>0 <span class="o">&gt;</span> /sys/kernel/debug/tracing/tracing_on
 
+<span class="c"># read trace buffer log</span>
+<span class="nb">cat</span> /sys/kernel/debug/tracing/trace
 
-    
-    <h1 style="font-size: 150%;">jekyll (3)</h1>
-    <a name="jekyll"></a>
-    <ul>
-    
-      <li><a href="/Tool-Box">Tool Box</a></li>
-    
-      <li><a href="/Jekyll-Test">Jekyll Test</a></li>
-    
-      <li><a href="/Create-a-blog-website-based-on-jekyll">Create a blog website based on jekyll</a></li>
-    
-    </ul>
+<span class="c"># clear trace buffer</span>
+<span class="nb">echo</span> <span class="o">&gt;</span> /sys/kernel/debug/tracing/trace
 
-    
-    <h1 style="font-size: 150%;">performance (1)</h1>
-    <a name="performance"></a>
-    <ul>
-    
-      <li><a href="/iowait">iowait</a></li>
-    
-    </ul>
+<span class="c"># enable a TRACE_EVENT</span>
+<span class="nb">echo </span>1 <span class="o">&gt;</span> /sys/kernel/debug/tracing/events/xxx/xxx/enable
+</code></pre></div></div>
 
             </div>
 		</div>

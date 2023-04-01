@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+	<meta charset="utf-8">
+    <link rel="stylesheet" href="/css/syntax.css">
+    <link rel="shortcut icon", href="/sources/images/NR.ico">
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+            inlineMath: [['$','$']]
+            }
+        });
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>    
+</head>
+<title>NR Linux</title>
+  <link href="/css/style.css" rel="stylesheet">
+  <body>
+  	<div class="container"> 
+		<div class="sidebar">
+			<div class="sidebar-item sidebar-header">
+	<div class='sidebar-brand'>
+		<a href="/index.html">NR Linux</a>
+	</div>
+    
+	<p class="lead">Nrush's tech blogs. Focus on linux kernel.</p>
+    <p>
+        <hr>
+        | <a href="https://github.com/nrusher">github</a> |
+          <a href="https://gitee.com/nrush">gitee</a> | 
+          <a href="https://github.com/nrusher">bio</a> |
+          <a href="/index.html">home</a> |
+        <hr>
+    </p>
+</div>
+
+<!--search-->
+<br/>
+<!-- HTML elements for search -->
+<input type="text" id="search-input" placeholder="search here"  style="min-width: 240px;"/>
+<ul id="results-container"></ul>
+
+<!-- script pointing to jekyll-search.js -->
+<script src="/js/simple-jekyll-search.min.js"></script>
+
+<script>
+SimpleJekyllSearch({
+    searchInput: document.getElementById('search-input'),
+    resultsContainer: document.getElementById('results-container'),
+    json: '/search.json',
+    searchResultTemplate: '<li><a href="{url}" title="{desc}">{title}</a></li>',
+    noResultsText: '',
+    limit: 5,
+    fuzzy: false
+  })
+</script>
+<br/>
+
+<div class="sidebar-item sidebar-nav">
+  	<ul class="nav">
+			<li class="nav-title">
+                <a href="/categories" style="color: white;"> Categories </a>
+            </li>
+	    
+	    <li>
+            <a href="/jekyll.html">
+				<span class="name">jekyll</span>
+				<span class="badge">3</span>
+	    	</a>
+ 		  </li>
+	    
+	    <li>
+            <a href="/performance.html">
+				<span class="name">performance</span>
+				<span class="badge">1</span>
+	    	</a>
+ 		  </li>
+	    
+	  </ul>
+</div>
+
+<div class="sidebar-item sidebar-nav">
+    <ul class="nav">
+        <li class="nav-title">links</li>
+        <li><a href="https://www.brendangregg.com/">brendangregg</a></li>
+        <li><a href="https://lwn.net/">lwn</a></li>
+    </ul>
+</div>
+
+<div class="sidebar-item sidebar-nav">
+  <p class="nav-title">NOTE</p>
+  <p class="lead"> Enjoy it.</p>
+</div>
+
+<br>
+<div class="sidebar-item sidebar-nav">
+  <p class="nav-title">RECENT</p>
+  <p class="lead"> Enjoy it.</p>
+</div>
+
+<div class="sidebar-item sidebar-footer">
+	<p>Powered by <a href="https://github.com/jekyll/jekyll">Jekyll</a></p>
+</div>
+
+		</div>
+		<div class="content">
+            <div class="paper">
+                <hr style="height:5px;border:none;border-top:5px double;"/>
+			    <p><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#1-text" id="markdown-toc-1-text">1 Text</a>    <ul>
+      <li><a href="#11--中文" id="markdown-toc-11--中文">1.1  中文</a></li>
+      <li><a href="#12--english" id="markdown-toc-12--english">1.2  English</a></li>
+      <li><a href="#13--blockquotes" id="markdown-toc-13--blockquotes">1.3  blockquotes</a></li>
+      <li><a href="#14-emoji" id="markdown-toc-14-emoji">1.4 emoji</a></li>
+    </ul>
+  </li>
+  <li><a href="#2-code" id="markdown-toc-2-code">2 Code</a></li>
+  <li><a href="#3-math" id="markdown-toc-3-math">3 Math</a></li>
+  <li><a href="#4-image" id="markdown-toc-4-image">4 Image</a></li>
+  <li><a href="#5-video" id="markdown-toc-5-video">5 Video</a></li>
+  <li><a href="#6-url" id="markdown-toc-6-url">6 url</a></li>
+  <li><a href="#7-download" id="markdown-toc-7-download">7 download</a></li>
+  <li><a href="#pdf-viewer" id="markdown-toc-pdf-viewer">Pdf Viewer</a></li>
+</ul>
+
+<p>I have been play with jekyll for a week. And this is my First jekyll blog. Best wish to my blog website! 🖤</p>
+
+<h2 id="1-text">1 Text</h2>
+
+<h3 id="11--中文">1.1  中文</h3>
+<p>这个博客用来测试jekyll的特性。</p>
+
+<h3 id="12--english">1.2  English</h3>
+<p>This blog is used to test jekyll’s features.</p>
+
+<h3 id="13--blockquotes">1.3  blockquotes</h3>
+<blockquote>
+  <p>hello</p>
+</blockquote>
+
+<h3 id="14-emoji">1.4 emoji</h3>
+<p><a href="http://www.unicode.org/charts/">http://www.unicode.org/charts/</a>必须是10进制数
+©
+੩
+🖤</p>
+
+<h2 id="2-code">2 Code</h2>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"hello world"</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo </span>hello world!
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">os</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="s">"hello world!"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="3-math">3 Math</h2>
+<pre><code class="language-math">a + b
+</code></pre>
+
+\[\begin{align*}
+  &amp; \phi(x,y) = \phi \left(\sum_{i=1}^n x_ie_i, \sum_{j=1}^n y_je_j \right)
+  = \sum_{i=1}^n \sum_{j=1}^n x_i y_j \phi(e_i, e_j) = \\
+  &amp; (x_1, \ldots, x_n) \left( \begin{array}{ccc}
+      \phi(e_1, e_1) &amp; \cdots &amp; \phi(e_1, e_n) \\
+      \vdots &amp; \ddots &amp; \vdots \\
+      \phi(e_n, e_1) &amp; \cdots &amp; \phi(e_n, e_n)
+    \end{array} \right)
+  \left( \begin{array}{c}
+      y_1 \\
+      \vdots \\
+      y_n
+    \end{array} \right)
+\end{align*}\]
+
+\[A + B\]
+
+<h2 id="4-image">4 Image</h2>
+
+<center><img src="/sources/images/test.jpg" alt="test_img" width="650" /></center>
+
+<h2 id="5-video">5 Video</h2>
+<center>
+<video width="320" height="240" controls="">
+  <source src="https://www.runoob.com/try/demo_source/movie.mp4" type="video/mp4" />
+  <source src="https://www.runoob.com/try/demo_source/movie.mp4" type="video/ogg" />
+  您的浏览器不支持 HTML5 video 标签。
+</video>
+</center>
+
+<h2 id="6-url">6 url</h2>
+<p><a href="Jekyll-Test">Jekyll Test</a></p>
+
+<h2 id="7-download">7 download</h2>
+<p><a href="/sources/images/test.jpg" download="test.jpg">点击下载</a></p>
+
+<h2 id="pdf-viewer">Pdf Viewer</h2>
+
+<center><embed src="/sources//pdf/devicetree-specification-v0.3-rc2.pdf" width="750px" height="1500px" /></center>
+
+
+            </div>
+		</div>
+	</div>
+  </body>
+</html>
