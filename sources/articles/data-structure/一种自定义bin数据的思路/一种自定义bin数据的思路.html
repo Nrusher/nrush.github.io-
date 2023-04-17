@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+	<meta charset="utf-8">
+    <link rel="stylesheet" href="http://nr-linux.com/css/syntax.css">
+    <link rel="shortcut icon", href="/sources/images/NR.ico">
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+            inlineMath: [['$','$']]
+            }
+        });
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?940d62eb74c20aae5d1fde8c0eca604d";
+          var s = document.getElementsByTagName("script")[0]; 
+          s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+</head>
+<title>NR Linux</title>
+  <link href="/css/style.css" rel="stylesheet">
+  <body>
+  	<div class="container"> 
+		<div class="sidebar">
+			<div class="sidebar-item sidebar-header">
+	<div class='sidebar-brand'>
+		<a href="http://nr-linux.com/index.html">NR Linux</a>
+	</div>
+    
+	<p class="lead">Nrush's tech blogs. Focus on linux kernel.</p>
+    <p>
+        <hr>
+        | <a href="https://github.com/nrusher">github</a> |
+          <a href="https://gitee.com/nrush">gitee</a> | 
+          <a href="http://nr-linux.com/bio.html">bio</a> |
+          <a href="http://nr-linux.com/index.html">home</a> |
+        <hr>
+    </p>
+</div>
+
+<!--search-->
+<br/>
+<!-- HTML elements for search -->
+<input type="text" id="search-input" placeholder="search here"  style="min-width: 240px;"/>
+<ul id="results-container"></ul>
+
+<!-- script pointing to jekyll-search.js -->
+<script src="http://nr-linux.com/js/simple-jekyll-search.min.js"></script>
+
+<script>
+SimpleJekyllSearch({
+    searchInput: document.getElementById('search-input'),
+    resultsContainer: document.getElementById('results-container'),
+    json: '/search.json',
+    searchResultTemplate: '<li><a href="{url}" title="{desc}">{title}</a></li>',
+    noResultsText: '',
+    limit: 5,
+    fuzzy: false
+  })
+</script>
+<br/>
+
+<div class="sidebar-item sidebar-nav">
+  	<ul class="nav">
+			<li class="nav-title">
+                <a href="http://nr-linux.com/categories" style="color: white;"> Categories </a>
+            </li>
+	    
+	    <li>
+            <a href="http://nr-linux.com/jekyll.html">
+				<span class="name">jekyll</span>
+				<span class="badge">2</span>
+	    	</a>
+ 		  </li>
+	    
+	    <li>
+            <a href="http://nr-linux.com/linux-tool.html">
+				<span class="name">linux-tool</span>
+				<span class="badge">1</span>
+	    	</a>
+ 		  </li>
+	    
+	    <li>
+            <a href="http://nr-linux.com/performance.html">
+				<span class="name">performance</span>
+				<span class="badge">1</span>
+	    	</a>
+ 		  </li>
+	    
+	  </ul>
+</div>
+
+<div class="sidebar-item sidebar-nav">
+    <ul class="nav">
+        <li class="nav-title">links</li>
+        <li><a href="https://www.brendangregg.com/">brendangregg</a></li>
+        <li><a href="https://lwn.net/">lwn</a></li>
+    </ul>
+</div>
+
+<div class="sidebar-item sidebar-nav">
+  <p class="nav-title">NOTE</p>
+  <p class="lead"> Enjoy it.</p>
+</div>
+
+<br>
+<div class="sidebar-item sidebar-nav">
+  <p class="nav-title">RECENT</p>
+  <p class="lead"> Enjoy it.</p>
+</div>
+
+<div class="sidebar-item sidebar-footer">
+	<p>Powered by <a href="https://github.com/jekyll/jekyll">Jekyll</a></p>
+</div>
+
+		</div>
+		<div class="content">
+            <div class="paper">
+                <hr style="height:5px;border:none;border-top:5px double;"/>
+			    <center><strong><font size="6">一种自定义bin数据的思路</font></strong></center>
+
+
+<p>  在工作过程中，需要将一部份文本数据转化为bin数据便于存储和c程序去处理。当然C程序直接处理文本文件也是没问题的，但从以下两个角度考虑，还是转化为bin格式去处理更高效一些。</p>
+
+<ul>
+  <li>C语言处理文本并不方便。</li>
+  <li>这些数据需要多次被使用，每次都处理一边效率低。</li>
+  <li>这些数据需要在服务器上进行存储，bin格式体积会更小一些。</li>
+</ul>
+
+<p>存储的bin格式需要满足以下需求：</p>
+<ul>
+  <li>c程序高效写入导出</li>
+</ul>
+
+<p>linux下和文件交互的最简单高效的方式是mmap，从这点出发，将要存储的数据按内存布局直接dump到bin文件中，再由mmap将文件加载到内存中无疑是最方便的。<strong><u>核心点：把文件当成内存来看，并以此组织数据</u></strong>。具体实现如下：</p>
+
+<p>  考虑一组可以用如下c程序表达的数据:</p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/*****************************
+ * bit width: 32bit
+ *  struct item {
+ *      int y;
+ *      char *s;
+ *  };
+ *  
+ *  struct data {
+ *      int x;
+ *      int number_of_item;
+ *      struct item *item;
+ *      char *s;
+ *  };
+ *****************************/</span>
+
+<span class="k">struct</span> <span class="n">item</span> <span class="n">it</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">.</span><span class="n">s</span> <span class="o">=</span> <span class="s">"haa"</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="n">data</span> <span class="n">dat</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="p">.</span><span class="n">number_of_item</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="p">.</span><span class="n">item</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">it</span><span class="p">,</span>
+    <span class="p">.</span><span class="n">s</span> <span class="o">=</span> <span class="err">'</span><span class="n">waa</span><span class="err">'</span>
+<span class="p">};</span>
+</code></pre></div></div>
+<p>那么可以构造如下的bin数据存储结构进行存储</p>
+<center><img src="/sources/articles/data-structure/一种自定义bin数据的思路/img/bin_format.svg" alt="bin_format" width="650" onerror="this.src='/sources/articles/data-structure/一种自定义bin数据的思路/img/bin_format.jpg'" /></center>
+
+<p>其中c结构中各个指针值都被表示成了对应数据在bin文件中的偏移。加载时只需要mmap文件，拷贝到分配好的内存中，然后根据bin数据的提供的offset值来计算各个指针在内存中的真实地址，然后修改对应指针的值为该真实地址即可，下面是一段处理的伪代码</p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="n">data_header</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">version</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">number_of_data</span><span class="p">;</span>
+    <span class="k">struct</span> <span class="n">data</span> <span class="o">*</span><span class="n">data</span><span class="p">;</span>
+    <span class="kt">uint32_t</span> <span class="n">item_offset</span><span class="p">;</span>
+    <span class="kt">uint32_t</span> <span class="n">string_offset</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="n">dat</span> <span class="o">=</span> <span class="n">mmap</span><span class="p">(</span><span class="err">'</span><span class="p">.</span><span class="o">/</span><span class="n">dat</span><span class="err">'</span><span class="p">);</span>
+<span class="n">buf</span> <span class="o">=</span> <span class="n">malloc</span><span class="p">(</span><span class="n">size_of_data</span><span class="p">);</span>
+<span class="n">memcpy</span><span class="p">(</span><span class="n">dat</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="n">size_of_data</span><span class="p">);</span>
+<span class="k">struct</span> <span class="n">data_header</span> <span class="o">*</span><span class="n">header</span> <span class="o">=</span> <span class="p">(</span><span class="k">struct</span> <span class="n">data_header</span> <span class="o">*</span><span class="p">)</span><span class="n">dat</span><span class="p">;</span>
+
+<span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">header</span><span class="o">-&gt;</span><span class="n">number_of_data</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">struct</span> <span class="n">data</span> <span class="o">*</span><span class="n">dat_ptr</span><span class="p">;</span>
+    <span class="n">dat_ptr</span><span class="o">-&gt;</span><span class="n">item</span> <span class="o">=</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">dat_ptr</span><span class="o">-&gt;</span><span class="n">item</span> <span class="o">+</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">header</span><span class="p">;</span>
+    <span class="n">dat_ptr</span><span class="o">-&gt;</span><span class="n">s</span> <span class="o">=</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">dat_ptr</span><span class="o">-&gt;</span><span class="n">s</span> <span class="o">+</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">header</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">dat_ptr</span><span class="o">-&gt;</span><span class="n">number_of_item</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">struct</span> <span class="n">item</span> <span class="o">*</span><span class="n">it_ptr</span><span class="p">;</span>
+        <span class="n">it_ptr</span><span class="o">-&gt;</span><span class="n">s</span> <span class="o">=</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">it_ptr</span><span class="o">-&gt;</span><span class="n">s</span> <span class="o">+</span> <span class="p">(</span><span class="n">uin32_t</span><span class="p">)</span><span class="n">header</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+            </div>
+		</div>
+	</div>
+  </body>
+</html>

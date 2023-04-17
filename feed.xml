@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator><link href="/http://nr-linux.com/feed.xml" rel="self" type="application/atom+xml" /><link href="/http://nr-linux.com/" rel="alternate" type="text/html" /><updated>2023-04-02T21:27:14+08:00</updated><id>/http://nr-linux.com/feed.xml</id><title type="html">NR Linux</title><subtitle>Nrush&apos;s tech blogs. Focus on linux kernel.</subtitle><entry><title type="html">iowait</title><link href="/http://nr-linux.com/iowait" rel="alternate" type="text/html" title="iowait" /><published>2023-04-01T00:00:00+08:00</published><updated>2023-04-01T00:00:00+08:00</updated><id>/http://nr-linux.com/iowait</id><content type="html" xml:base="/http://nr-linux.com/iowait"><![CDATA[<center><strong><font size="6">iowait</font></strong></center>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator><link href="/http://nr-linux.com/feed.xml" rel="self" type="application/atom+xml" /><link href="/http://nr-linux.com/" rel="alternate" type="text/html" /><updated>2023-04-18T00:58:50+08:00</updated><id>/http://nr-linux.com/feed.xml</id><title type="html">NR Linux</title><subtitle>Nrush&apos;s tech blogs. Focus on linux kernel.</subtitle><entry><title type="html">iowait</title><link href="/http://nr-linux.com/iowait" rel="alternate" type="text/html" title="iowait" /><published>2023-04-01T00:00:00+08:00</published><updated>2023-04-01T00:00:00+08:00</updated><id>/http://nr-linux.com/iowait</id><content type="html" xml:base="/http://nr-linux.com/iowait"><![CDATA[<center><strong><font size="6">iowait</font></strong></center>
 
 <ul id="markdown-toc">
   <li><a href="#1-定义" id="markdown-toc-1-定义">1 定义</a></li>
@@ -65,21 +65,50 @@
 mmcblk0      1.59      0.13      9.54      1.04      6.73      0.02     12.61      0.42
 </code></pre></div></div>]]></content><author><name>Nrush</name></author><category term="performance" /><summary type="html"><![CDATA[iowait]]></summary></entry><entry><title type="html">Tool Box</title><link href="/http://nr-linux.com/Tool-Box" rel="alternate" type="text/html" title="Tool Box" /><published>2023-03-12T00:00:00+08:00</published><updated>2023-03-12T00:00:00+08:00</updated><id>/http://nr-linux.com/Tool-Box</id><content type="html" xml:base="/http://nr-linux.com/Tool-Box"><![CDATA[<center><h1>Tool Box</h1></center>
 
-<p>This page is used to record some useful tools I used to write blogs.</p>
+<p>This page is used to record some useful tools I used.</p>
 
-<ul>
-  <li>WaveDrom:  A Free online digital timing diagram (waveform) rendering engine.<br />
-github: <a href="https://github.com/wavedrom/wavedrom.github.io/releases">https://github.com/wavedrom/wavedrom.github.io/releases</a><br />
-online: <a href="https://wavedrom.com/editor.html">https://wavedrom.com/editor.html</a></li>
-  <li>drawio: <a href="https://github.com/jgraph/drawio-desktop/releases/">https://github.com/jgraph/drawio-desktop/releases/</a></li>
-  <li>chatgpt: A powerful AI!!!!<br />
-https://chat.openai.com/</li>
-  <li>
-    <p>snakeviz: A python performance analysis tools<br />
-https://jiffyclub.github.io/snakeviz/</p>
+<h2 id="misc">Misc</h2>
+
+<ol>
+  <li>WaveDrom:  A Free online digital timing diagram (waveform) rendering engine.
+    <ul>
+      <li>github: <a href="https://github.com/wavedrom/wavedrom.github.io">https://github.com/wavedrom/wavedrom.github.io</a></li>
+      <li>online: <a href="https://wavedrom.com/editor.html">https://wavedrom.com/editor.html</a></li>
+    </ul>
   </li>
-  <li>https://www.hezibuluo.com/154557.html</li>
-</ul>]]></content><author><name>Nrush</name></author><category term="jekyll" /><summary type="html"><![CDATA[Tool Box This page is used to record some useful tools I used to write blogs. WaveDrom: A Free online digital timing diagram (waveform) rendering engine. github: https://github.com/wavedrom/wavedrom.github.io/releases online: https://wavedrom.com/editor.html drawio: https://github.com/jgraph/drawio-desktop/releases/ chatgpt: A powerful AI!!!! https://chat.openai.com/ snakeviz: A python performance analysis tools https://jiffyclub.github.io/snakeviz/ https://www.hezibuluo.com/154557.html]]></summary></entry><entry><title type="html">Create a blog website based on jekyll</title><link href="/http://nr-linux.com/Create-a-blog-website-based-on-jekyll" rel="alternate" type="text/html" title="Create a blog website based on jekyll" /><published>2023-02-28T00:00:00+08:00</published><updated>2023-02-28T00:00:00+08:00</updated><id>/http://nr-linux.com/Create-a-blog-website-based-on-jekyll</id><content type="html" xml:base="/http://nr-linux.com/Create-a-blog-website-based-on-jekyll"><![CDATA[<center><strong><font size="6">Create a blog website based on jekyll</font></strong></center>
+  <li>[★]drawio: A free, open-source online diagramming tool.
+    <ul>
+      <li>github: <a href="https://github.com/jgraph/drawio-desktop/releases/">https://github.com/jgraph/drawio-desktop/releases/</a></li>
+      <li>online: <a href="https://app.diagrams.net/">https://app.diagrams.net/</a></li>
+    </ul>
+  </li>
+  <li>[★]chatgpt: A powerful AI!!!!
+    <ul>
+      <li>comments: strongly recommend.</li>
+      <li>official website: <a href="https://chat.openai.com">https://chat.openai.com</a></li>
+    </ul>
+  </li>
+  <li>snakeviz: A python performance analysis tools.
+    <ul>
+      <li>github: <a href="https://jiffyclub.github.io/snakeviz">https://jiffyclub.github.io/snakeviz</a></li>
+    </ul>
+  </li>
+  <li>fbi: A test tool for frambuffer device.
+    <ul>
+      <li>short guide: <code class="language-plaintext highlighter-rouge">fbi -T &lt;console id&gt; &lt;picture path&gt;</code></li>
+    </ul>
+  </li>
+  <li>nohup: A tool can keep process runing even the console is colsed.
+    <ul>
+      <li>short guide: <code class="language-plaintext highlighter-rouge">nohup &lt;command&gt; &amp;</code></li>
+    </ul>
+  </li>
+  <li>IDA (Interactive Disassembler): A software commonly used in reverse engineering for analyzing binary files.
+    <ul>
+      <li>official website: <a href="https://hex-rays.com">https://hex-rays.com</a></li>
+    </ul>
+  </li>
+</ol>]]></content><author><name>Nrush</name></author><category term="linux-tool" /><summary type="html"><![CDATA[Tool Box This page is used to record some useful tools I used. Misc WaveDrom: A Free online digital timing diagram (waveform) rendering engine. github: https://github.com/wavedrom/wavedrom.github.io online: https://wavedrom.com/editor.html [★]drawio: A free, open-source online diagramming tool. github: https://github.com/jgraph/drawio-desktop/releases/ online: https://app.diagrams.net/ [★]chatgpt: A powerful AI!!!! comments: strongly recommend. official website: https://chat.openai.com snakeviz: A python performance analysis tools. github: https://jiffyclub.github.io/snakeviz fbi: A test tool for frambuffer device. short guide: fbi -T &lt;console id&gt; &lt;picture path&gt; nohup: A tool can keep process runing even the console is colsed. short guide: nohup &lt;command&gt; &amp; IDA (Interactive Disassembler): A software commonly used in reverse engineering for analyzing binary files. official website: https://hex-rays.com]]></summary></entry><entry><title type="html">Create a blog website based on jekyll</title><link href="/http://nr-linux.com/Create-a-blog-website-based-on-jekyll" rel="alternate" type="text/html" title="Create a blog website based on jekyll" /><published>2023-02-28T00:00:00+08:00</published><updated>2023-02-28T00:00:00+08:00</updated><id>/http://nr-linux.com/Create-a-blog-website-based-on-jekyll</id><content type="html" xml:base="/http://nr-linux.com/Create-a-blog-website-based-on-jekyll"><![CDATA[<center><strong><font size="6">Create a blog website based on jekyll</font></strong></center>
 
 <ul id="markdown-toc">
   <li><a href="#1-what-is-jekyll" id="markdown-toc-1-what-is-jekyll">1 What is jekyll?</a></li>
@@ -310,15 +339,22 @@ tcb hosting deploy ./ <span class="nt">-e</span> &lt;envid&gt;
 
 <h2 id="pdf-viewer">Pdf Viewer</h2>
 
-<center><embed src="/sources//pdf/devicetree-specification-v0.3-rc2.pdf" width="750px" height="1500px" /></center>]]></content><author><name>Nrush</name></author><category term="jekyll" /><summary type="html"><![CDATA[Table of Contents 1 Text 1.1 中文 1.2 English 1.3 blockquotes 1.4 emoji 2 Code 3 Math 4 Image 5 Video 6 url 7 download Pdf Viewer I have been play with jekyll for a week. And this is my First jekyll blog. Best wish to my blog website! 🖤 1 Text 1.1 中文 这个博客用来测试jekyll的特性。 1.2 English This blog is used to test jekyll’s features. 1.3 blockquotes hello 1.4 emoji http://www.unicode.org/charts/必须是10进制数 © ੩ 🖤 2 Code #include &lt;stdio.h&gt; int main(void) { printf("hello world"); } echo hello world! import os print("hello world!") 3 Math a + b \[\begin{align*} &amp; \phi(x,y) = \phi \left(\sum_{i=1}^n x_ie_i, \sum_{j=1}^n y_je_j \right) = \sum_{i=1}^n \sum_{j=1}^n x_i y_j \phi(e_i, e_j) = \\ &amp; (x_1, \ldots, x_n) \left( \begin{array}{ccc} \phi(e_1, e_1) &amp; \cdots &amp; \phi(e_1, e_n) \\ \vdots &amp; \ddots &amp; \vdots \\ \phi(e_n, e_1) &amp; \cdots &amp; \phi(e_n, e_n) \end{array} \right) \left( \begin{array}{c} y_1 \\ \vdots \\ y_n \end{array} \right) \end{align*}\] \[A + B\] 4 Image 5 Video 您的浏览器不支持 HTML5 video 标签。 6 url Jekyll Test 7 download 点击下载 Pdf Viewer]]></summary></entry><entry><title type="html">categories</title><link href="/http://nr-linux.com/categories" rel="alternate" type="text/html" title="categories" /><published>1996-01-01T00:00:00+08:00</published><updated>1996-01-01T00:00:00+08:00</updated><id>/http://nr-linux.com/categories</id><content type="html" xml:base="/http://nr-linux.com/categories"><![CDATA[<h1 style="font-size: 150%;">jekyll (3)</h1>
+<center><embed src="/sources//pdf/devicetree-specification-v0.3-rc2.pdf" width="750px" height="1500px" /></center>]]></content><author><name>Nrush</name></author><category term="jekyll" /><summary type="html"><![CDATA[Table of Contents 1 Text 1.1 中文 1.2 English 1.3 blockquotes 1.4 emoji 2 Code 3 Math 4 Image 5 Video 6 url 7 download Pdf Viewer I have been play with jekyll for a week. And this is my First jekyll blog. Best wish to my blog website! 🖤 1 Text 1.1 中文 这个博客用来测试jekyll的特性。 1.2 English This blog is used to test jekyll’s features. 1.3 blockquotes hello 1.4 emoji http://www.unicode.org/charts/必须是10进制数 © ੩ 🖤 2 Code #include &lt;stdio.h&gt; int main(void) { printf("hello world"); } echo hello world! import os print("hello world!") 3 Math a + b \[\begin{align*} &amp; \phi(x,y) = \phi \left(\sum_{i=1}^n x_ie_i, \sum_{j=1}^n y_je_j \right) = \sum_{i=1}^n \sum_{j=1}^n x_i y_j \phi(e_i, e_j) = \\ &amp; (x_1, \ldots, x_n) \left( \begin{array}{ccc} \phi(e_1, e_1) &amp; \cdots &amp; \phi(e_1, e_n) \\ \vdots &amp; \ddots &amp; \vdots \\ \phi(e_n, e_1) &amp; \cdots &amp; \phi(e_n, e_n) \end{array} \right) \left( \begin{array}{c} y_1 \\ \vdots \\ y_n \end{array} \right) \end{align*}\] \[A + B\] 4 Image 5 Video 您的浏览器不支持 HTML5 video 标签。 6 url Jekyll Test 7 download 点击下载 Pdf Viewer]]></summary></entry><entry><title type="html">categories</title><link href="/http://nr-linux.com/categories" rel="alternate" type="text/html" title="categories" /><published>1996-01-01T00:00:00+08:00</published><updated>1996-01-01T00:00:00+08:00</updated><id>/http://nr-linux.com/categories</id><content type="html" xml:base="/http://nr-linux.com/categories"><![CDATA[<h1 style="font-size: 150%;">jekyll (2)</h1>
     <a name="jekyll"></a>
     <ul>
-    
-      <li><a href="http://nr-linux.com/Tool-Box">Tool Box</a></li>
     
       <li><a href="http://nr-linux.com/Jekyll-Test">Jekyll Test</a></li>
     
       <li><a href="http://nr-linux.com/Create-a-blog-website-based-on-jekyll">Create a blog website based on jekyll</a></li>
+    
+    </ul>
+
+    
+    <h1 style="font-size: 150%;">linux-tool (1)</h1>
+    <a name="linux-tool"></a>
+    <ul>
+    
+      <li><a href="http://nr-linux.com/Tool-Box">Tool Box</a></li>
     
     </ul>
 
@@ -329,20 +365,12 @@ tcb hosting deploy ./ <span class="nt">-e</span> &lt;envid&gt;
     
       <li><a href="http://nr-linux.com/iowait">iowait</a></li>
     
-    </ul>]]></content><author><name></name></author><summary type="html"><![CDATA[jekyll (3) Tool Box Jekyll Test Create a blog website based on jekyll performance (1) iowait]]></summary></entry><entry><title type="html">jekyll</title><link href="/http://nr-linux.com/jekyll" rel="alternate" type="text/html" title="jekyll" /><published>1996-01-01T00:00:00+08:00</published><updated>1996-01-01T00:00:00+08:00</updated><id>/http://nr-linux.com/jekyll</id><content type="html" xml:base="/http://nr-linux.com/jekyll"><![CDATA[<h1 style="font-size: 150%;">jekyll</h1>
+    </ul>]]></content><author><name></name></author><summary type="html"><![CDATA[jekyll (2) Jekyll Test Create a blog website based on jekyll linux-tool (1) Tool Box performance (1) iowait]]></summary></entry><entry><title type="html">architecture</title><link href="/http://nr-linux.com/architecture" rel="alternate" type="text/html" title="architecture" /><published>1996-01-01T00:00:00+08:00</published><updated>1996-01-01T00:00:00+08:00</updated><id>/http://nr-linux.com/architecture</id><content type="html" xml:base="/http://nr-linux.com/architecture"><![CDATA[]]></content><author><name></name></author><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">data-structure</title><link href="/http://nr-linux.com/data-structure" rel="alternate" type="text/html" title="data-structure" /><published>1996-01-01T00:00:00+08:00</published><updated>1996-01-01T00:00:00+08:00</updated><id>/http://nr-linux.com/data-structure</id><content type="html" xml:base="/http://nr-linux.com/data-structure"><![CDATA[]]></content><author><name></name></author><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">fs</title><link href="/http://nr-linux.com/fs" rel="alternate" type="text/html" title="fs" /><published>1996-01-01T00:00:00+08:00</published><updated>1996-01-01T00:00:00+08:00</updated><id>/http://nr-linux.com/fs</id><content type="html" xml:base="/http://nr-linux.com/fs"><![CDATA[]]></content><author><name></name></author><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">interrupt</title><link href="/http://nr-linux.com/interrupt" rel="alternate" type="text/html" title="interrupt" /><published>1996-01-01T00:00:00+08:00</published><updated>1996-01-01T00:00:00+08:00</updated><id>/http://nr-linux.com/interrupt</id><content type="html" xml:base="/http://nr-linux.com/interrupt"><![CDATA[]]></content><author><name></name></author><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">jekyll</title><link href="/http://nr-linux.com/jekyll" rel="alternate" type="text/html" title="jekyll" /><published>1996-01-01T00:00:00+08:00</published><updated>1996-01-01T00:00:00+08:00</updated><id>/http://nr-linux.com/jekyll</id><content type="html" xml:base="/http://nr-linux.com/jekyll"><![CDATA[<h1 style="font-size: 150%;">jekyll</h1>
         <a name="jekyll"></a>
         <ul>
-        
-            <li><a href="http://nr-linux.com/Tool-Box">Tool Box</a></li>
         
             <li><a href="http://nr-linux.com/Jekyll-Test">Jekyll Test</a></li>
         
             <li><a href="http://nr-linux.com/Create-a-blog-website-based-on-jekyll">Create a blog website based on jekyll</a></li>
         
-        </ul>]]></content><author><name></name></author><summary type="html"><![CDATA[jekyll Tool Box Jekyll Test Create a blog website based on jekyll]]></summary></entry><entry><title type="html">performance</title><link href="/http://nr-linux.com/performance" rel="alternate" type="text/html" title="performance" /><published>1996-01-01T00:00:00+08:00</published><updated>1996-01-01T00:00:00+08:00</updated><id>/http://nr-linux.com/performance</id><content type="html" xml:base="/http://nr-linux.com/performance"><![CDATA[<h1 style="font-size: 150%;">performance</h1>
-        <a name="performance"></a>
-        <ul>
-        
-            <li><a href="http://nr-linux.com/iowait">iowait</a></li>
-        
-        </ul>]]></content><author><name></name></author><summary type="html"><![CDATA[performance iowait]]></summary></entry></feed>
+        </ul>]]></content><author><name></name></author><summary type="html"><![CDATA[jekyll Jekyll Test Create a blog website based on jekyll]]></summary></entry></feed>

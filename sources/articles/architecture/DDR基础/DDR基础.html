@@ -122,17 +122,22 @@ SimpleJekyllSearch({
 		<div class="content">
             <div class="paper">
                 <hr style="height:5px;border:none;border-top:5px double;"/>
-			    <center><strong><font size="6">Perf Event</font></strong></center>
+			    <center><strong><font size="6">DDR基础</font></strong></center>
 
+<ul id="markdown-toc">
+  <li><a href="#reference" id="markdown-toc-reference">Reference</a></li>
+</ul>
 
-<p>判断是否支持PMU，看启动log中又没有PMU关键字</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cat /var/log/dmesg | grep PMU
-</code></pre></div></div>
+<p>DDR全称Double Data Rate Synchronous Dynamic Random Access Memory</p>
 
-<p>https://blog.csdn.net/pwl999/article/details/81200439</p>
+<p>channel，DDRC
+DIMM(Dual Inline Memory Module)
+rank
+chip
+bank
+row,column</p>
 
-<p>使用perf采集系统调用栈的demo：<a href="/sources/demo/perf_event/perf_event_sample.c" download="perf_event_sample.c">perf_event_sample.c</a></p>
-
+<h2 id="reference">Reference</h2>
 
             </div>
 		</div>

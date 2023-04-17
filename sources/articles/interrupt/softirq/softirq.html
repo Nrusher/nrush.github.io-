@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+	<meta charset="utf-8">
+    <link rel="stylesheet" href="http://nr-linux.com/css/syntax.css">
+    <link rel="shortcut icon", href="/sources/images/NR.ico">
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+            inlineMath: [['$','$']]
+            }
+        });
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?940d62eb74c20aae5d1fde8c0eca604d";
+          var s = document.getElementsByTagName("script")[0]; 
+          s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+</head>
+<title>NR Linux</title>
+  <link href="/css/style.css" rel="stylesheet">
+  <body>
+  	<div class="container"> 
+		<div class="sidebar">
+			<div class="sidebar-item sidebar-header">
+	<div class='sidebar-brand'>
+		<a href="http://nr-linux.com/index.html">NR Linux</a>
+	</div>
+    
+	<p class="lead">Nrush's tech blogs. Focus on linux kernel.</p>
+    <p>
+        <hr>
+        | <a href="https://github.com/nrusher">github</a> |
+          <a href="https://gitee.com/nrush">gitee</a> | 
+          <a href="http://nr-linux.com/bio.html">bio</a> |
+          <a href="http://nr-linux.com/index.html">home</a> |
+        <hr>
+    </p>
+</div>
+
+<!--search-->
+<br/>
+<!-- HTML elements for search -->
+<input type="text" id="search-input" placeholder="search here"  style="min-width: 240px;"/>
+<ul id="results-container"></ul>
+
+<!-- script pointing to jekyll-search.js -->
+<script src="http://nr-linux.com/js/simple-jekyll-search.min.js"></script>
+
+<script>
+SimpleJekyllSearch({
+    searchInput: document.getElementById('search-input'),
+    resultsContainer: document.getElementById('results-container'),
+    json: '/search.json',
+    searchResultTemplate: '<li><a href="{url}" title="{desc}">{title}</a></li>',
+    noResultsText: '',
+    limit: 5,
+    fuzzy: false
+  })
+</script>
+<br/>
+
+<div class="sidebar-item sidebar-nav">
+  	<ul class="nav">
+			<li class="nav-title">
+                <a href="http://nr-linux.com/categories" style="color: white;"> Categories </a>
+            </li>
+	    
+	    <li>
+            <a href="http://nr-linux.com/jekyll.html">
+				<span class="name">jekyll</span>
+				<span class="badge">2</span>
+	    	</a>
+ 		  </li>
+	    
+	    <li>
+            <a href="http://nr-linux.com/linux-tool.html">
+				<span class="name">linux-tool</span>
+				<span class="badge">1</span>
+	    	</a>
+ 		  </li>
+	    
+	    <li>
+            <a href="http://nr-linux.com/performance.html">
+				<span class="name">performance</span>
+				<span class="badge">1</span>
+	    	</a>
+ 		  </li>
+	    
+	  </ul>
+</div>
+
+<div class="sidebar-item sidebar-nav">
+    <ul class="nav">
+        <li class="nav-title">links</li>
+        <li><a href="https://www.brendangregg.com/">brendangregg</a></li>
+        <li><a href="https://lwn.net/">lwn</a></li>
+    </ul>
+</div>
+
+<div class="sidebar-item sidebar-nav">
+  <p class="nav-title">NOTE</p>
+  <p class="lead"> Enjoy it.</p>
+</div>
+
+<br>
+<div class="sidebar-item sidebar-nav">
+  <p class="nav-title">RECENT</p>
+  <p class="lead"> Enjoy it.</p>
+</div>
+
+<div class="sidebar-item sidebar-footer">
+	<p>Powered by <a href="https://github.com/jekyll/jekyll">Jekyll</a></p>
+</div>
+
+		</div>
+		<div class="content">
+            <div class="paper">
+                <hr style="height:5px;border:none;border-top:5px double;"/>
+			    <center><strong><font size="6">softirq</font></strong></center>
+
+<ul id="markdown-toc">
+  <li><a href="#1-softirq机制简述" id="markdown-toc-1-softirq机制简述">1 softirq机制简述</a></li>
+  <li><a href="#2-softirq使用方法" id="markdown-toc-2-softirq使用方法">2 softirq使用方法</a></li>
+  <li><a href="#3-softirq实现原理" id="markdown-toc-3-softirq实现原理">3 softirq实现原理</a></li>
+  <li><a href="#4-要点总结" id="markdown-toc-4-要点总结">4. 要点总结</a></li>
+</ul>
+
+<h2 id="1-softirq机制简述">1 softirq机制简述</h2>
+
+<p>中断是系统中重要的组成部分，然而在中断中执行过多的代码不是一个好的选择，这会影响系统的响应速度和并发能力，另一方面，非嵌套状态下，处于硬中断上下文的处理器无法响应其他中断，这会导致丢中断。原则上硬中断上下文中的代码应当越好，但现实情况是我们的确需要在中断来临后做大量工作，这就产生中断上半部和下半部的概念，上半部表示在中断到来时必须处理的事务，下半部表示可以适当延后的工作。举个不是特别恰当的例子，工人使用机器生产工件，这时机器突然故障（中断），因为故障机器可能会导致人身事故，此时工人需要立刻关闭机器电源（上半部），停机后工人需要检修机器恢复生产（下半部）。关停机器必须立刻执行，那何时恢复生产呢？如果工期紧急，那可能需要越快恢复越好，如果工期宽松，那隔日修复也没问题。中断的上半部处理的是在中断的上下文中完成的，但下半部在何时处理就是一个值得讨论的时机。例如刚刚机器故障的例子，为了更灵活的处理中断的下半部，linux提供了softirq、tasklet、中断线程化和workqueue等方式，其响应及时程度依次递减。当然这三种途径不仅可以处理中断下半部，也可以作为异步通知手段。</p>
+
+<h2 id="2-softirq使用方法">2 softirq使用方法</h2>
+
+<p>softirq对外暴露的接口如下</p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/* 注册一个软中断handler,当软中断被raise时，该handler会被执行 */</span>
+<span class="kt">void</span> <span class="nf">open_softirq</span><span class="p">(</span><span class="kt">int</span> <span class="n">nr</span><span class="p">,</span> <span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">action</span><span class="p">)(</span><span class="k">struct</span> <span class="n">softirq_action</span> <span class="o">*</span><span class="p">));</span>
+<span class="cm">/* 唤起软中断号为nr的softirq */</span>
+<span class="kt">void</span> <span class="nf">raise_softirq</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">nr</span><span class="p">);</span>
+<span class="cm">/* 同上，但该api必须在关中断的情况下调用 */</span>
+<span class="kt">void</span> <span class="nf">raise_softirq_irqoff</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">nr</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>NOTE：中断回调函数中不一定是关中断的，因为中断有可能被线程化（RT patch），在回调函数中raise softirq时需谨慎，不要默认回调函数的上下文是关中断的而直接调用<code class="language-plaintext highlighter-rouge">raise_softirq_irqoff()</code>。</p>
+
+<h2 id="3-softirq实现原理">3 softirq实现原理</h2>
+
+<p>softirq的实现源码位于kernel/softirq.c，首先看一下softirq的关键数据结构</p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">__softirq_pending</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">____cacheline_aligned</span> <span class="n">irq_cpustat_t</span><span class="p">;</span>
+<span class="n">DEFINE_PER_CPU_ALIGNED</span><span class="p">(</span><span class="n">irq_cpustat_t</span><span class="p">,</span> <span class="n">irq_stat</span><span class="p">);</span>
+
+<span class="k">struct</span> <span class="n">softirq_action</span>
+<span class="p">{</span>
+	<span class="kt">void</span>	<span class="p">(</span><span class="o">*</span><span class="n">action</span><span class="p">)(</span><span class="k">struct</span> <span class="n">softirq_action</span> <span class="o">*</span><span class="p">);</span>
+<span class="p">};</span>
+<span class="k">static</span> <span class="k">struct</span> <span class="n">softirq_action</span> <span class="n">softirq_vec</span><span class="p">[</span><span class="n">NR_SOFTIRQS</span><span class="p">]</span> <span class="n">__cacheline_aligned_in_smp</span><span class="p">;</span>
+</code></pre></div></div>
+<p>softirq相关的数据结构比较简单，所有软中断的handler都会由<code class="language-plaintext highlighter-rouge">open_softirq(hanler, nr)</code>注册到对应的数组位置，因此这个<code class="language-plaintext highlighter-rouge">softirq_vec[]</code>可以理解为中断向量表。</p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">open_softirq</span><span class="p">(</span><span class="kt">int</span> <span class="n">nr</span><span class="p">,</span> <span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">action</span><span class="p">)(</span><span class="k">struct</span> <span class="n">softirq_action</span> <span class="o">*</span><span class="p">))</span>
+<span class="p">{</span>
+	<span class="n">softirq_vec</span><span class="p">[</span><span class="n">nr</span><span class="p">].</span><span class="n">action</span> <span class="o">=</span> <span class="n">action</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/* 目前内核中使用的softirq */</span>
+<span class="k">enum</span>
+<span class="p">{</span>
+	<span class="n">HI_SOFTIRQ</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+	<span class="n">TIMER_SOFTIRQ</span><span class="p">,</span>
+	<span class="n">NET_TX_SOFTIRQ</span><span class="p">,</span>
+	<span class="n">NET_RX_SOFTIRQ</span><span class="p">,</span>
+	<span class="n">BLOCK_SOFTIRQ</span><span class="p">,</span>
+	<span class="n">IRQ_POLL_SOFTIRQ</span><span class="p">,</span>
+	<span class="n">TASKLET_SOFTIRQ</span><span class="p">,</span>
+	<span class="n">SCHED_SOFTIRQ</span><span class="p">,</span>
+	<span class="n">HRTIMER_SOFTIRQ</span><span class="p">,</span>
+	<span class="n">RCU_SOFTIRQ</span><span class="p">,</span>    <span class="cm">/* Preferable RCU should always be the last softirq */</span>
+	<span class="n">NR_SOFTIRQS</span>
+<span class="p">};</span>
+</code></pre></div></div>
+<p>per_cpu变量<code class="language-plaintext highlighter-rouge">irq_stat</code>被用来表示本cpu的软中断状态，变量<code class="language-plaintext highlighter-rouge">__softirq_pending</code>的每一位bit都代表对应软中断状态，软中断发生时会调用<code class="language-plaintext highlighter-rouge">raise_softirq()</code>，置位对应的bit，软中断处理完后对应bit会被清除，这个<code class="language-plaintext highlighter-rouge">irq_stat</code>相当于per_cpu的中断寄存器。</p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">inline</span> <span class="kt">void</span> <span class="nf">raise_softirq_irqoff</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">nr</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">__raise_softirq_irqoff</span><span class="p">(</span><span class="n">nr</span><span class="p">);</span>
+
+	<span class="cm">/*
+	 * If we're in an interrupt or softirq, we're done
+	 * (this also catches softirq-disabled code). We will
+	 * actually run the softirq once we return from
+	 * the irq or softirq.
+	 *
+	 * Otherwise we wake up ksoftirqd to make sure we
+	 * schedule the softirq soon.
+	 */</span>
+	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">in_interrupt</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="n">should_wake_ksoftirqd</span><span class="p">())</span>
+		<span class="n">wakeup_softirqd</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">raise_softirq</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">nr</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">flags</span><span class="p">;</span>
+
+	<span class="n">local_irq_save</span><span class="p">(</span><span class="n">flags</span><span class="p">);</span>
+	<span class="n">raise_softirq_irqoff</span><span class="p">(</span><span class="n">nr</span><span class="p">);</span>
+	<span class="n">local_irq_restore</span><span class="p">(</span><span class="n">flags</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">__raise_softirq_irqoff</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">nr</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">lockdep_assert_irqs_disabled</span><span class="p">();</span>
+	<span class="n">trace_softirq_raise</span><span class="p">(</span><span class="n">nr</span><span class="p">);</span>
+	<span class="n">or_softirq_pending</span><span class="p">(</span><span class="mi">1UL</span> <span class="o">&lt;&lt;</span> <span class="n">nr</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>从上面源码看，raise一个softirq必须是关硬中断，原因是什么？这需要分析softirq的处理流程。处理softirq的时机有多处，per_cpu的softirqd线程上下文、硬中断执行<code class="language-plaintext highlighter-rouge">irq_exit()</code>时、<code class="language-plaintext highlighter-rouge">local_bh_enable()</code>使能底半部时都会触发softirq处理。先来分析硬中断softirq执行流程：</p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">中断</span><span class="o">--&gt;</span><span class="n">irq_exit</span><span class="p">()</span><span class="o">--&gt;</span><span class="n">__irq_exit_rcu</span><span class="p">()</span><span class="o">--&gt;</span><span class="n">invoke_softirq</span><span class="p">()</span>
+</code></pre></div></div>
+<p>硬中断结束后，会判断是否有本地的软中断被置位，如置位则开始调用<code class="language-plaintext highlighter-rouge">invoke_softirq()</code>进行软中断处理流程</p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">in_interrupt</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="n">local_softirq_pending</span><span class="p">())</span>
+	<span class="n">invoke_softirq</span><span class="p">();</span>
+</code></pre></div></div>
+<p>对于开启抢占的内核(<code class="language-plaintext highlighter-rouge">CONFIG_PREEMPT_RT</code>)，处理流程比较简单，直接唤醒本地的<code class="language-plaintext highlighter-rouge">softirqd</code>处理</p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">static</span> <span class="kr">inline</span> <span class="kt">void</span> <span class="nf">invoke_softirq</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">should_wake_ksoftirqd</span><span class="p">())</span>
+		<span class="n">wakeup_softirqd</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>何时唤醒<code class="language-plaintext highlighter-rouge">softirqd</code>？</p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">static</span> <span class="kr">inline</span> <span class="n">bool</span> <span class="nf">should_wake_ksoftirqd</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="k">return</span> <span class="o">!</span><span class="n">this_cpu_read</span><span class="p">(</span><span class="n">softirq_ctrl</span><span class="p">.</span><span class="n">cnt</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>这里的<code class="language-plaintext highlighter-rouge">cnt</code>是用来记录，当前是否处于关软中断的状态（非0关闭，0未关闭），若处于关软中断状态，则此处应该避免无意义的唤醒动作。</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>QUESTION：RT 为什么在这里修改了处理流程？
+</code></pre></div></div>
+<p>对于未开启抢占的内核，此处处理逻辑会复杂些</p>
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">static</span> <span class="kr">inline</span> <span class="kt">void</span> <span class="nf">invoke_softirq</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">ksoftirqd_running</span><span class="p">(</span><span class="n">local_softirq_pending</span><span class="p">()))</span>
+		<span class="k">return</span><span class="p">;</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">force_irqthreads</span><span class="p">()</span> <span class="o">||</span> <span class="o">!</span><span class="n">__this_cpu_read</span><span class="p">(</span><span class="n">ksoftirqd</span><span class="p">))</span> <span class="p">{</span>
+		<span class="n">__do_softirq</span><span class="p">();</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+		<span class="n">wakeup_softirqd</span><span class="p">();</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<ul>
+  <li>line 3 判断softirqd是否在运行，运行则让softirqd处理软中断，跳过该处理</li>
+  <li>line 6 如果没有开启中断线程化或ksoftirqd还未初始化成功，则直接在硬中断处理流程中处理软中断，否则唤醒softirqd处理。</li>
+</ul>
+
+<p>中断线程化一般在高实时性要求场合下会开，可见内核开发者并不希望高实时性要求要求场合下在中断退出流程中处理软中断。</p>
+
+<p>继续分析软中断的具体处理流程</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">__do_softirq</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">end</span> <span class="o">=</span> <span class="n">jiffies</span> <span class="o">+</span> <span class="n">MAX_SOFTIRQ_TIME</span><span class="p">;</span>
+	<span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">old_flags</span> <span class="o">=</span> <span class="n">current</span><span class="o">-&gt;</span><span class="n">flags</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">max_restart</span> <span class="o">=</span> <span class="n">MAX_SOFTIRQ_RESTART</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">softirq_action</span> <span class="o">*</span><span class="n">h</span><span class="p">;</span>
+	<span class="n">bool</span> <span class="n">in_hardirq</span><span class="p">;</span>
+	<span class="n">__u32</span> <span class="n">pending</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">softirq_bit</span><span class="p">;</span>
+
+	<span class="cm">/*
+	 * Mask out PF_MEMALLOC as the current task context is borrowed for the
+	 * softirq. A softirq handled, such as network RX, might set PF_MEMALLOC
+	 * again if the socket is related to swapping.
+	 */</span>
+	<span class="n">current</span><span class="o">-&gt;</span><span class="n">flags</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">PF_MEMALLOC</span><span class="p">;</span>
+
+	<span class="n">pending</span> <span class="o">=</span> <span class="n">local_softirq_pending</span><span class="p">();</span>
+
+	<span class="n">softirq_handle_begin</span><span class="p">();</span>
+	<span class="n">in_hardirq</span> <span class="o">=</span> <span class="n">lockdep_softirq_start</span><span class="p">();</span>
+	<span class="n">account_softirq_enter</span><span class="p">(</span><span class="n">current</span><span class="p">);</span>
+
+<span class="nl">restart:</span>
+	<span class="cm">/* Reset the pending bitmask before enabling irqs */</span>
+	<span class="n">set_softirq_pending</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+
+	<span class="n">local_irq_enable</span><span class="p">();</span>
+
+	<span class="n">h</span> <span class="o">=</span> <span class="n">softirq_vec</span><span class="p">;</span>
+
+	<span class="k">while</span> <span class="p">((</span><span class="n">softirq_bit</span> <span class="o">=</span> <span class="n">ffs</span><span class="p">(</span><span class="n">pending</span><span class="p">)))</span> <span class="p">{</span>
+		<span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">vec_nr</span><span class="p">;</span>
+		<span class="kt">int</span> <span class="n">prev_count</span><span class="p">;</span>
+
+		<span class="n">h</span> <span class="o">+=</span> <span class="n">softirq_bit</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+
+		<span class="n">vec_nr</span> <span class="o">=</span> <span class="n">h</span> <span class="o">-</span> <span class="n">softirq_vec</span><span class="p">;</span>
+		<span class="n">prev_count</span> <span class="o">=</span> <span class="n">preempt_count</span><span class="p">();</span>
+
+		<span class="n">kstat_incr_softirqs_this_cpu</span><span class="p">(</span><span class="n">vec_nr</span><span class="p">);</span>
+
+		<span class="n">trace_softirq_entry</span><span class="p">(</span><span class="n">vec_nr</span><span class="p">);</span>
+		<span class="n">h</span><span class="o">-&gt;</span><span class="n">action</span><span class="p">(</span><span class="n">h</span><span class="p">);</span>
+		<span class="n">trace_softirq_exit</span><span class="p">(</span><span class="n">vec_nr</span><span class="p">);</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">unlikely</span><span class="p">(</span><span class="n">prev_count</span> <span class="o">!=</span> <span class="n">preempt_count</span><span class="p">()))</span> <span class="p">{</span>
+			<span class="n">pr_err</span><span class="p">(</span><span class="s">"huh, entered softirq %u %s %p with preempt_count %08x, exited with %08x?</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span>
+			       <span class="n">vec_nr</span><span class="p">,</span> <span class="n">softirq_to_name</span><span class="p">[</span><span class="n">vec_nr</span><span class="p">],</span> <span class="n">h</span><span class="o">-&gt;</span><span class="n">action</span><span class="p">,</span>
+			       <span class="n">prev_count</span><span class="p">,</span> <span class="n">preempt_count</span><span class="p">());</span>
+			<span class="n">preempt_count_set</span><span class="p">(</span><span class="n">prev_count</span><span class="p">);</span>
+		<span class="p">}</span>
+		<span class="n">h</span><span class="o">++</span><span class="p">;</span>
+		<span class="n">pending</span> <span class="o">&gt;&gt;=</span> <span class="n">softirq_bit</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">IS_ENABLED</span><span class="p">(</span><span class="n">CONFIG_PREEMPT_RT</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+	    <span class="n">__this_cpu_read</span><span class="p">(</span><span class="n">ksoftirqd</span><span class="p">)</span> <span class="o">==</span> <span class="n">current</span><span class="p">)</span>
+		<span class="n">rcu_softirq_qs</span><span class="p">();</span>
+
+	<span class="n">local_irq_disable</span><span class="p">();</span>
+
+	<span class="n">pending</span> <span class="o">=</span> <span class="n">local_softirq_pending</span><span class="p">();</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">pending</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">time_before</span><span class="p">(</span><span class="n">jiffies</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">need_resched</span><span class="p">()</span> <span class="o">&amp;&amp;</span>
+		    <span class="o">--</span><span class="n">max_restart</span><span class="p">)</span>
+			<span class="k">goto</span> <span class="n">restart</span><span class="p">;</span>
+
+		<span class="n">wakeup_softirqd</span><span class="p">();</span>
+	<span class="p">}</span>
+
+	<span class="n">account_softirq_exit</span><span class="p">(</span><span class="n">current</span><span class="p">);</span>
+	<span class="n">lockdep_softirq_end</span><span class="p">(</span><span class="n">in_hardirq</span><span class="p">);</span>
+	<span class="n">softirq_handle_end</span><span class="p">();</span>
+	<span class="n">current_restore_flags</span><span class="p">(</span><span class="n">old_flags</span><span class="p">,</span> <span class="n">PF_MEMALLOC</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>line 18 读取当前softirq的软中断pending状态，本次将会依次处理完。</li>
+  <li>line 20 标记调用<code class="language-plaintext highlighter-rouge">	__local_bh_disable_ip()</code>软中断处理开始，主要关闭上下文处理的下半部处理流程进入软中断临界区。</li>
+  <li>line 22 标记当前task进入软中断，用于统计软中断耗时</li>
+  <li>line 26-28 获取当前cpu软中断的pending位，并开启中断。可见软中断处理过程中是允许硬中断产生的，硬中断handler中有可能会raise软中断，如果在开启硬中断前未清空pending位，就有可能漏掉软中断。注意本次要处理的pending位已在line 18处缓存。</li>
+  <li>line 30-54 遍历pending位依次处理软中断回调函数。</li>
+  <li>line 60-69 关中断，重新读取pending位，如果软中断处理流程中有软中断发生，且处理流程没有超过MAX_SOFTIRQ_TIME(2ms)、没有调度请求、没有超过最大处理次数(10)，则返回restart处再次重复处理软中断流程。否则唤醒softirqd，交由softirqd处理。</li>
+  <li>line 71-75 退出软中断处理流程。</li>
+</ul>
+
+<p>softfirqd以及local_bh_enable()中的软中断处理流程中主体部分都调用的是<code class="language-plaintext highlighter-rouge">__do_softirq()</code>函数，这里不在详细分析。</p>
+
+<h2 id="4-要点总结">4. 要点总结</h2>
+
+<ul>
+  <li>当前内核中softirq数目是有限的，已使用的有10个，网络收发、timer回调、hrtimer回调、tasklet回调、sched负载均衡回调都是在softirq中处理的。</li>
+  <li>softirq可以在任意上下文被raise，但必须关中断。</li>
+  <li>softirq可能会在中断退出时、退出下半部临界区以及softirqd中被处理。</li>
+  <li>softirq的处理是percpu的，在那个cpu上被唤醒讲由哪个cpu处理。</li>
+  <li>softirq的handler的处理过程是开中断的，可以被中断打断，但不会被其他软中断中断。</li>
+  <li>softirq的handler中也应当遵循短快、无休眠的原则。如果在softirq中休眠的话，其中一个影响就是可能阻塞softirqd线程，导致其他软中断无法被处理。</li>
+  <li>softirqd可能被RT线程抢占，其有有限级为normal 120</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-c" data-lang="c"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+</pre></td><td class="code"><pre>    <span class="n">sss</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+            </div>
+		</div>
+	</div>
+  </body>
+</html>
