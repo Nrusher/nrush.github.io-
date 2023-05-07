@@ -1,10 +1,18 @@
 [
   
     {
+      "title"    : "Reading List",
+      "category" : "",
+      "tags"     : "",
+      "url"      : "https://nr-linux.com/Reading-List",
+      "date"     : "2023-04-26 00:00:00 +0800"
+    } ,
+  
+    {
       "title"    : "iowait",
       "category" : "",
       "tags"     : "",
-      "url"      : "http://nr-linux.com/iowait",
+      "url"      : "https://nr-linux.com/iowait",
       "date"     : "2023-04-01 00:00:00 +0800"
     } ,
   
@@ -12,7 +20,7 @@
       "title"    : "Tool Box",
       "category" : "",
       "tags"     : "",
-      "url"      : "http://nr-linux.com/Tool-Box",
+      "url"      : "https://nr-linux.com/Tool-Box",
       "date"     : "2023-03-12 00:00:00 +0800"
     } ,
   
@@ -20,7 +28,7 @@
       "title"    : "Jekyll Test",
       "category" : "",
       "tags"     : "",
-      "url"      : "http://nr-linux.com/Jekyll-Test",
+      "url"      : "https://nr-linux.com/Jekyll-Test",
       "date"     : "2023-02-28 00:00:00 +0800"
     } ,
   
@@ -28,7 +36,7 @@
       "title"    : "Create a blog website based on jekyll",
       "category" : "",
       "tags"     : "",
-      "url"      : "http://nr-linux.com/Create-a-blog-website-based-on-jekyll",
+      "url"      : "https://nr-linux.com/Create-a-blog-website-based-on-jekyll",
       "date"     : "2023-02-28 00:00:00 +0800"
     } ,
   
@@ -36,7 +44,15 @@
       "title"    : "performance",
       "category" : "",
       "tags"     : "",
-      "url"      : "http://nr-linux.com/performance",
+      "url"      : "https://nr-linux.com/performance",
+      "date"     : "1996-01-01 00:00:00 +0800"
+    } ,
+  
+    {
+      "title"    : "others",
+      "category" : "",
+      "tags"     : "",
+      "url"      : "https://nr-linux.com/others",
       "date"     : "1996-01-01 00:00:00 +0800"
     } ,
   
@@ -44,7 +60,7 @@
       "title"    : "linux-tool",
       "category" : "",
       "tags"     : "",
-      "url"      : "http://nr-linux.com/linux-tool",
+      "url"      : "https://nr-linux.com/linux-tool",
       "date"     : "1996-01-01 00:00:00 +0800"
     } ,
   
@@ -52,7 +68,7 @@
       "title"    : "jekyll",
       "category" : "",
       "tags"     : "",
-      "url"      : "http://nr-linux.com/jekyll",
+      "url"      : "https://nr-linux.com/jekyll",
       "date"     : "1996-01-01 00:00:00 +0800"
     } ,
   
@@ -60,7 +76,7 @@
       "title"    : "interrupt",
       "category" : "",
       "tags"     : "",
-      "url"      : "http://nr-linux.com/interrupt",
+      "url"      : "https://nr-linux.com/interrupt",
       "date"     : "1996-01-01 00:00:00 +0800"
     } ,
   
@@ -68,7 +84,7 @@
       "title"    : "fs",
       "category" : "",
       "tags"     : "",
-      "url"      : "http://nr-linux.com/fs",
+      "url"      : "https://nr-linux.com/fs",
       "date"     : "1996-01-01 00:00:00 +0800"
     } ,
   
@@ -76,7 +92,7 @@
       "title"    : "data-structure",
       "category" : "",
       "tags"     : "",
-      "url"      : "http://nr-linux.com/data-structure",
+      "url"      : "https://nr-linux.com/data-structure",
       "date"     : "1996-01-01 00:00:00 +0800"
     } ,
   
@@ -84,7 +100,7 @@
       "title"    : "architecture",
       "category" : "",
       "tags"     : "",
-      "url"      : "http://nr-linux.com/architecture",
+      "url"      : "https://nr-linux.com/architecture",
       "date"     : "1996-01-01 00:00:00 +0800"
     } ,
   
@@ -92,7 +108,7 @@
       "title"    : "categories",
       "category" : "",
       "tags"     : "",
-      "url"      : "http://nr-linux.com/categories",
+      "url"      : "https://nr-linux.com/categories",
       "date"     : "1996-01-01 00:00:00 +0800"
     } 
   

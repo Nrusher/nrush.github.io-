@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 	<meta charset="utf-8">
-    <link rel="stylesheet" href="http://nr-linux.com/css/syntax.css">
+    <link rel="stylesheet" href="https://nr-linux.com/css/syntax.css">
     <link rel="shortcut icon", href="/sources/images/NR.ico">
     <script type="text/x-mathjax-config">
         MathJax.Hub.Config({
@@ -29,7 +29,7 @@
 		<div class="sidebar">
 			<div class="sidebar-item sidebar-header">
 	<div class='sidebar-brand'>
-		<a href="http://nr-linux.com/index.html">NR Linux</a>
+		<a href="https://nr-linux.com/index.html">NR Linux</a>
 	</div>
     
 	<p class="lead">Nrush's tech blogs. Focus on linux kernel.</p>
@@ -37,8 +37,8 @@
         <hr>
         | <a href="https://github.com/nrusher">github</a> |
           <a href="https://gitee.com/nrush">gitee</a> | 
-          <a href="http://nr-linux.com/bio.html">bio</a> |
-          <a href="http://nr-linux.com/index.html">home</a> |
+          <a href="https://nr-linux.com/bio.html">bio</a> |
+          <a href="https://nr-linux.com/index.html">home</a> |
         <hr>
     </p>
 </div>
@@ -50,7 +50,7 @@
 <ul id="results-container"></ul>
 
 <!-- script pointing to jekyll-search.js -->
-<script src="http://nr-linux.com/js/simple-jekyll-search.min.js"></script>
+<script src="https://nr-linux.com/js/simple-jekyll-search.min.js"></script>
 
 <script>
 SimpleJekyllSearch({
@@ -68,26 +68,33 @@ SimpleJekyllSearch({
 <div class="sidebar-item sidebar-nav">
   	<ul class="nav">
 			<li class="nav-title">
-                <a href="http://nr-linux.com/categories" style="color: white;"> Categories </a>
+                <a href="https://nr-linux.com/categories" style="color: white;"> Categories </a>
             </li>
 	    
 	    <li>
-            <a href="http://nr-linux.com/jekyll.html">
+            <a href="https://nr-linux.com/jekyll.html">
 				<span class="name">jekyll</span>
 				<span class="badge">2</span>
 	    	</a>
  		  </li>
 	    
 	    <li>
-            <a href="http://nr-linux.com/linux-tool.html">
+            <a href="https://nr-linux.com/linux-tool.html">
 				<span class="name">linux-tool</span>
 				<span class="badge">1</span>
 	    	</a>
  		  </li>
 	    
 	    <li>
-            <a href="http://nr-linux.com/performance.html">
+            <a href="https://nr-linux.com/performance.html">
 				<span class="name">performance</span>
+				<span class="badge">1</span>
+	    	</a>
+ 		  </li>
+	    
+	    <li>
+            <a href="https://nr-linux.com/others.html">
+				<span class="name">others</span>
 				<span class="badge">1</span>
 	    	</a>
  		  </li>
@@ -97,9 +104,12 @@ SimpleJekyllSearch({
 
 <div class="sidebar-item sidebar-nav">
     <ul class="nav">
-        <li class="nav-title">links</li>
+        <li class="nav-title">
+          <a href="https://nr-linux.com/links" style="color: white;"> links </a>
+        </li>
         <li><a href="https://www.brendangregg.com/">brendangregg</a></li>
         <li><a href="https://lwn.net/">lwn</a></li>
+        <li><a href="https://nr-linux.com/Tool-Box">tool box</a></li>
     </ul>
 </div>
 
@@ -125,19 +135,116 @@ SimpleJekyllSearch({
 			    <center><strong><font size="6">DDR基础</font></strong></center>
 
 <ul id="markdown-toc">
+  <li><a href="#1-dram存储基本原理" id="markdown-toc-1-dram存储基本原理">1 DRAM存储基本原理</a>    <ul>
+      <li><a href="#11-bit存储" id="markdown-toc-11-bit存储">1.1 Bit存储</a></li>
+      <li><a href="#12-memory-array" id="markdown-toc-12-memory-array">1.2 Memory Array</a></li>
+      <li><a href="#13-cell-和-bank" id="markdown-toc-13-cell-和-bank">1.3 Cell 和 Bank</a></li>
+      <li><a href="#13-rank" id="markdown-toc-13-rank">1.3 Rank</a></li>
+      <li><a href="#14-小结" id="markdown-toc-14-小结">1.4 小结</a></li>
+    </ul>
+  </li>
+  <li><a href="#2-ddr带宽性能" id="markdown-toc-2-ddr带宽性能">2 DDR带宽性能</a>    <ul>
+      <li><a href="#21-再看bitmemory-arraybank和rank" id="markdown-toc-21-再看bitmemory-arraybank和rank">2.1 再看bit、memory array、bank和rank</a></li>
+      <li><a href="#22-理想照进现实micron-ddr-分析" id="markdown-toc-22-理想照进现实micron-ddr-分析">2.2 理想照进现实–Micron DDR 分析</a>        <ul>
+          <li><a href="#22x-ddr的时间参数" id="markdown-toc-22x-ddr的时间参数">2.2.x DDR的时间参数</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#3-总结" id="markdown-toc-3-总结">3 总结</a></li>
   <li><a href="#reference" id="markdown-toc-reference">Reference</a></li>
 </ul>
 
-<p>DDR全称Double Data Rate Synchronous Dynamic Random Access Memory</p>
+<p>  DDR全称Double Data Rate Synchronous Dynamic Random Access Memory，是当代处理器必不可少的存储器件之一。本文关于DDR介绍的核心点如下：</p>
+<ol>
+  <li>DDR存储基本原理</li>
+  <li>DDR性能提升方法</li>
+</ol>
 
-<p>channel，DDRC
-DIMM(Dual Inline Memory Module)
-rank
-chip
-bank
-row,column</p>
+<h2 id="1-dram存储基本原理">1 DRAM存储基本原理</h2>
 
+<p>  DDR属于DRAM的一种，DRAM（Dynamic Random Access Memory）的核心词Dynamic是指这种存储器件需要<strong>动态刷新</strong>以保证存储的数据不丢失，与之相对的是SRAM（Static Random Access Memory）。这里的‘刷新’在DRAM中具体指什么呢？这就需要从DRAM的基本存储原理说起。</p>
+
+<h3 id="11-bit存储">1.1 Bit存储</h3>
+
+<p>  现代数字存储最基本的单位是bit，就先从bit存储的角度来看DDR的存储原理。以下是DDR存储一个bit的基础电路</p>
+<center><img src="/sources/articles/architecture/DDR基础/img/cell.svg" alt="cell" width="250" /></center>
+<p>这里有三个关键器件MOSFET，电容和放大器。MOSFET可以理解成一个电子开关，当G端为1时S和D端将会导通，否者处于断开状态（当然这个描述并不准确，MOSFET的导通关闭是需要满足特定条件的，这个在本文中不是重点，因此不赘述）；电容是储能元件，这里被用来存储bit信息，当其充满电时可被认作为逻辑1，否则被认为是逻辑0；放大器是一种可以将微弱电流电压信号放大到易于观测的量级的器件。</p>
+
+<p>  具体如何读取和写入bit呢？对于读取过程，先对column line经行预充电，电位置为Vcc/2（Vcc为系统供电电压），然后将row line置为1使S，D连通。如果电容中有电荷且电位高于Vcc/2，那AMPS将会检测到一个微小的电压抬升$\delta u_1$，此时可以认为读到了逻辑1，该逻辑值将会被存储到锁存器中；如果电容中没有电荷或者电位小于Vcc/2，那这次导通将会对电容进行充电，进而导致column line上电压出现微小的电压下降$\delta u_2$，AMPS会检测到该电压变化，并认为读到了逻辑0，同样该值也会被存入锁存器。对于写入1，只需要将column line置为Vcc，然后row line置为1使S，D导通，对电容充电使其电位高于Vcc/2；如果要写入0，则只需要执行读取操作，不充电即可，因为无论先前电容电位是否高于Vcc/2，由于读取过程中的电荷泄露，读取完成后该值都将低于Vcc/2。从另一个角度说，对电容读取是个破坏存储的过程，无论之前存储的信息是多少，读取后都将归为0。如何维持信息bit 1不被读出操作破坏呢？只需在读取后立刻向电容写入存储在锁存器中的值即可。事实上，由于MOSFET、电容漏电的原因，如果长时间不进行写入1操作，原本处于Vcc/2以上电位的电容，会因为漏电而导致电位掉到Vcc/2以下，这将导致bit1的信息被反转成bit0。因此需要对该电路进行定期的读写操作以保证信息的不丢失，这里的定期读写就是上文提到的刷新，即D字的来源。</p>
+
+<h3 id="12-memory-array">1.2 Memory Array</h3>
+
+<p>  显然只能存储一个bit的系统是没有实用价值的，这节介绍如何将这些bit组织成大规模内存单元。现在将上一节中介绍bit存储单元组织成如下图的矩阵形式</p>
+<center><img src="/sources/articles/architecture/DDR基础/img/mem-array.svg" alt="cell" width="500" /></center>
+<p>上图中4x4的方块矩阵中，每个小方块对应于一个bit存储电路，深色为1，浅色为0。同一行的存储电路共用row line，同一列的存储电路共用column line，那根据上一节中的读写原理，实际上如果指定操作一根row line，一根column line，其实等效确定的去操作特定的bit。因此只要给这个bit矩阵的行和列添加一行译码器（根据输入地址选择特定行）和列译码器即可指定操作任意的bit，例如上图中使用行地址0x02列地址0x01既可选中编号为[2,1]的bit进行读写操作。</p>
+
+<h3 id="13-cell-和-bank">1.3 Cell 和 Bank</h3>
+<p>这样的布局理论上已可以进行大规模数据存储，只要这个排列足够大即可。但读写操作对column line充电这一操作是比较耗时的，每次充电只能读取1bit效率比较低，如何实现一次充电操作读取多个bit呢？</p>
+<center><img src="/sources/articles/architecture/DDR基础/img/bank.svg" alt="cell" width="350" /></center>
+<p>事实上如上图，将多个内存矩阵堆叠排列，所有的行列都接到同一组地址线上即可（当然每列的数据锁存是独立的，只是共享列地址），这样一组行列地址将会对应多个bit。堆叠的整体被称为bank，一般由4、8或16个内存矩阵进行堆叠，对应的这些bank会有4bit，8bit或16bit的数据线，通常以x4、x8和x16进行命名区分。这里所有memory array中相同行列的bit，被称为一个cell。</p>
+
+<h3 id="13-rank">1.3 Rank</h3>
+
+<p>现代处理器的数据总线一般是64bit或者更高，但上一节中提到的bank从设计角度一般被配置成x4、x8和x16，数据总线和处理器的数据总线位宽并不对齐，此时可以将多个bank的数据总线并联以获取足够的位宽。以x8的bank为例，只需要8个bank并联，每次读取64bit时选取这些bank的相同行，不同列，便可以实现一次读取64bit数据。这样一个能够提供独立内存访问的bank组可以被称为是一个rank。多bank的排列除了能对齐数据总线位宽外，其还能极大拓展rank的内存的大小。</p>
+<center><img src="/sources/articles/architecture/DDR基础/img/rank.svg" alt="cell" width="400" /></center>
+
+<h3 id="14-小结">1.4 小结</h3>
+
+<p>通过以上对cell、memory array、bank以及rank的介绍，基本上可以理解对DRAM原理。但这些介绍还只停留在逻辑层面，现实中的DDR远比上面描述的要复杂的多。下一章将从高性能DDR实现的角度来进一步深入介绍DDR的基础知识。</p>
+
+<h2 id="2-ddr带宽性能">2 DDR带宽性能</h2>
+
+<p>在对DDR进行选型时，有许多参数需要参考，例如功耗、内存大小、带宽、时延等，本章将针对带宽性能相关的内容进行探讨。</p>
+
+<h3 id="21-再看bitmemory-arraybank和rank">2.1 再看bit、memory array、bank和rank</h3>
+<p>从性能角度再回顾一下DRAM的存储原理，会有不一样的发现。
+从最基础的bit存储看：</p>
+<ol>
+  <li>一个bit的在读写过程中比较耗时的是column预充电的过程。</li>
+  <li>column line上的功能要远比row line上的器件复杂。</li>
+  <li>bit需要定时刷新，不刷新或超时刷新可能导致数据失效，这意味着，对于共享一套刷新系统的bit而言，刷新率和内存大小上限应该是正相关的。</li>
+</ol>
+
+<p>memory array的行列数是个比较考究的参数。从bit存储的几个特点可以推测：</p>
+<ol>
+  <li>从空间效率上看，memory array的行数应多于列数。由于列上的功能更加复杂，相应的需要的器件也会更多，相同数量的bit，以相对更多的行和更少的列进行排布将更节省晶圆的物理面积占用。</li>
+  <li>从带宽性能角度看，列数应尽量多。如果一味的减少列数提高空间利用率，将会有读写性能下降的问题。假设memory array只有一列，每读取一个bit都需要对column进行一次充电，充电时间为$t$，则读取$n$bit必须要$nt$；而对于有$n$列的memory array，如果需要读取的bit恰好是在相同的row不同的col上，那可以同时$n$列进行充电读取，读取$n$bit的时间仅为$t$。</li>
+</ol>
+
+<p>对于一个bank而言</p>
+<ol>
+  <li>cell包含的bit数越高，读写带宽越高。一个cell中包含的bit数越多，那么一次读取操作获取的bit数越多，带宽效率自然越高。</li>
+  <li>多bank情况下，交叉读写不同bank，可以有效提高读写带宽。一个bank完成对一行的数据读写后，如果需要再次读取同一bank的另外一行上的数据，那必须耗费较长的时间重新打开一行，如果只有一个bank，那此时总线必须处于等待状态。假设需要读取的地址处于两个不同的bank中，那么在向其中一个bank发完第一个读指令后，此时不再需要等待第一笔数据返回，便可以向另一个bank发送读指令读数据，这样对总线的利用率是最高的。当bank多到一定量时这种轮流读的方式将形成循环，从外部看相当于不存在刷新等待。</li>
+</ol>
+
+<center><img src="/sources/articles/architecture/DDR基础/img/mutibank.svg" alt="mutibank" width="600" /></center>
+
+<p>同以提高bank数来提高带宽效率一样，多个rank也可以在一定程度上形成交叉读写的时序，以提高DRAM的带宽性能。除此之外，因为rank间的数据总线及其他硬件资源都是独立的，如果控制器支持同时读写多个rank，也就是多通道，那对于不同通道上的rank完全可以实现并行读写，理论带宽翻倍。</p>
+
+<h3 id="22-理想照进现实micron-ddr-分析">2.2 理想照进现实–Micron DDR 分析</h3>
+
+<center><img src="/sources/articles/architecture/DDR基础/img/MDRAM.png" alt="Micron DRAM" width="900" /></center>
+
+<h4 id="22x-ddr的时间参数">2.2.x DDR的时间参数</h4>
+
+<h2 id="3-总结">3 总结</h2>
+
+<p>DDR作为当前设备的主流大容量主存设备，影响着SoC</p>
 <h2 id="reference">Reference</h2>
+
+<p>[1] <a href="https://blogs.synopsys.com/vip-central/2019/02/27/ddr5-4-3-2-how-memory-density-and-speed-increased-with-each-generation-of-ddr/">DDR5/4/3/2: How Memory Density and Speed Increased with each Generation of DDR</a></p>
+
+<p>[2] <a href="https://media-www.micron.com/-/media/client/global/documents/products/technical-note/dram/tn4605.pdf?rev=19186dcf48cc4aaeb55b6e44bfc4a51e">Micron TN-46-05: GENERAL DDR SDRAM FUNCTIONALITY</a></p>
+
+<p>[3] <a href="https://www.systemverilog.io/design/ddr4-basics/">DDR4 Tutorial Understanding the Basics</a></p>
+
+<p>[4] <a href="https://media-www.micron.com/-/media/client/global/documents/products/data-sheet/dram/ddr4/4gb_ddr4_dram.pdf?rev=a4122900efb84963a0d9207033a5a286">Micron Datasheet: DDR4 SDRAM</a></p>
+
+<p>[5] <a href="https://media-www.micron.com/-/media/client/global/documents/products/technical-note/dram/e1503e10.pdf?rev=83acba24ab8f4db7936700b3b63a620b">Micron: New Features of DDR3 SDRAM</a></p>
+
+<p>[6] <a href="https://media-www.micron.com/-/media/client/global/documents/products/technical-note/dram/tn4040_ddr4_point_to_point_design_guide.pdf?rev=d58bc222192d411aae066b2577a12677">Micron TN-40-4: DDR4 Point-to-Point Design Guide</a></p>
+
 
             </div>
 		</div>

@@ -60,6 +60,10 @@ a:hover {
 	text-decoration: underline;
 }
 
+.paper p {
+	margin: 10px 0;
+  }
+
 pre {
 	display: block;
 	overflow: auto;
