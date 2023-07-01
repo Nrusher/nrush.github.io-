@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+	<meta charset="utf-8">
+    <link rel="stylesheet" href="https://nr-linux.com/css/syntax.css">
+    <link rel="shortcut icon", href="/sources/images/NR.ico">
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+            inlineMath: [['$','$']]
+            }
+        });
+    </script>
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?940d62eb74c20aae5d1fde8c0eca604d";
+          var s = document.getElementsByTagName("script")[0]; 
+          s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+</head>
+<title>NR Linux</title>
+  <link href="/css/style.css" rel="stylesheet">
+  <body>
+  	<div class="container"> 
+		<div class="sidebar">
+			<div class="sidebar-item sidebar-header">
+	<div class='sidebar-brand'>
+		<a href="https://nr-linux.com/index.html">NR Linux</a>
+	</div>
+    
+	<p class="lead">Nrush's tech blogs. Focus on linux kernel.</p>
+    <p>
+        <hr>
+        | <a href="https://github.com/nrusher">github</a> |
+          <a href="https://gitee.com/nrush">gitee</a> | 
+          <a href="https://nr-linux.com/bio.html">bio</a> |
+          <a href="https://nr-linux.com/index.html">home</a> |
+        <hr>
+    </p>
+</div>
+
+<!--search-->
+<br/>
+<!-- HTML elements for search -->
+<input type="text" id="search-input" placeholder="search here"  style="min-width: 240px;"/>
+<ul id="results-container"></ul>
+
+<!-- script pointing to jekyll-search.js -->
+<script src="https://nr-linux.com/js/simple-jekyll-search.min.js"></script>
+
+<script>
+SimpleJekyllSearch({
+    searchInput: document.getElementById('search-input'),
+    resultsContainer: document.getElementById('results-container'),
+    json: '/search.json',
+    searchResultTemplate: '<li><a href="{url}" title="{desc}">{title}</a></li>',
+    noResultsText: '',
+    limit: 5,
+    fuzzy: false
+  })
+</script>
+<br/>
+
+<div class="sidebar-item sidebar-nav">
+  	<ul class="nav">
+			<li class="nav-title">
+                <a href="https://nr-linux.com/categories" style="color: white;"> Categories </a>
+            </li>
+	    
+	    <li>
+            <a href="https://nr-linux.com/jekyll.html">
+				<span class="name">jekyll</span>
+				<span class="badge">2</span>
+	    	</a>
+ 		  </li>
+	    
+	    <li>
+            <a href="https://nr-linux.com/linux-tool.html">
+				<span class="name">linux-tool</span>
+				<span class="badge">1</span>
+	    	</a>
+ 		  </li>
+	    
+	    <li>
+            <a href="https://nr-linux.com/performance.html">
+				<span class="name">performance</span>
+				<span class="badge">1</span>
+	    	</a>
+ 		  </li>
+	    
+	    <li>
+            <a href="https://nr-linux.com/architecture.html">
+				<span class="name">architecture</span>
+				<span class="badge">1</span>
+	    	</a>
+ 		  </li>
+	    
+	    <li>
+            <a href="https://nr-linux.com/others.html">
+				<span class="name">others</span>
+				<span class="badge">1</span>
+	    	</a>
+ 		  </li>
+	    
+	  </ul>
+</div>
+
+<div class="sidebar-item sidebar-nav">
+    <ul class="nav">
+        <li class="nav-title">
+          <a href="https://nr-linux.com/links" style="color: white;"> links </a>
+        </li>
+        <li><a href="https://www.brendangregg.com/">brendangregg</a></li>
+        <li><a href="https://lwn.net/">lwn</a></li>
+        <li><a href="https://nr-linux.com/Tool-Box">tool box</a></li>
+    </ul>
+</div>
+
+<div class="sidebar-item sidebar-nav">
+  <p class="nav-title">NOTE</p>
+  <p class="lead"> Enjoy it.</p>
+</div>
+
+<br>
+<div class="sidebar-item sidebar-nav">
+  <p class="nav-title">RECENT</p>
+  <p class="lead"> Enjoy it.</p>
+</div>
+
+<div class="sidebar-item sidebar-footer">
+	<p>Powered by <a href="https://github.com/jekyll/jekyll">Jekyll</a></p>
+</div>
+
+		</div>
+		<div class="content">
+            <div class="paper">
+                <hr style="height:5px;border:none;border-top:5px double;"/>
+			    <center><strong><font size="6">CPU Cache漫谈</font></strong></center>
+
+<ul id="markdown-toc">
+  <li><a href="#1-处理器为什么需要cache" id="markdown-toc-1-处理器为什么需要cache">1 处理器为什么需要Cache？</a></li>
+  <li><a href="#2-cache的基本原理" id="markdown-toc-2-cache的基本原理">2 Cache的基本原理</a>    <ul>
+      <li><a href="#21-q1-cache中的资源要如何组织与主存的内存资源相对应" id="markdown-toc-21-q1-cache中的资源要如何组织与主存的内存资源相对应">2.1 Q1: Cache中的资源要如何组织与主存的内存资源相对应？</a></li>
+      <li><a href="#22-q2主存中的数据何时被添加到cache中" id="markdown-toc-22-q2主存中的数据何时被添加到cache中">2.2 Q2：主存中的数据何时被添加到Cache中？</a></li>
+      <li><a href="#23-q3-如何判断处理器需要的数据是否在cache中" id="markdown-toc-23-q3-如何判断处理器需要的数据是否在cache中">2.3 Q3 如何判断处理器需要的数据是否在Cache中？</a></li>
+    </ul>
+  </li>
+  <li><a href="#附录一些小实验" id="markdown-toc-附录一些小实验">附录：一些小实验</a></li>
+  <li><a href="#reference" id="markdown-toc-reference">Reference</a></li>
+</ul>
+
+<h2 id="1-处理器为什么需要cache">1 处理器为什么需要Cache？</h2>
+
+<p>性能是计算机永恒的主题之一，在如何让处理器跑的更快的道路上，现代处理器已使用了非常多的方法，如高主频、多级流水、多发射、乱序执行等等，这些方法让现代处理器拥有非常高的数据处理速度，然而相比处理器性能的提升，数据存储器件性能（主要指DRAM）的提升相对却较为缓慢，从1980年到2010年处理器的性能提升了10000倍，而数据存储器的性能只提升了10倍不到。这使得数据读写速度成为制约处理器性能的重要因素之一，处理器需要在等待数据读写上花费大量时间。</p>
+<center>
+<table width="90%">
+    <tbody align="center">
+        <tr>
+            <td><img src="/sources/articles/architecture/CPU-Cache漫谈/img/cpu-and-mem-performance.png" width="500" /></td>
+            <td><img src="/sources/articles/architecture/CPU-Cache漫谈/img/memory-hierarchy.svg" width="400" /></td>
+        </tr>
+        <tr>
+            <td>（1）1980-2010 处理器及存储器性能趋势图</td>
+            <td>（2）一台家PC典型存储层级</td>
+        </tr>
+    </tbody>
+</table>
+</center>
+<p>就目前而言，存储器件读写速度越高，价格相应更贵，以高速存储器件SRAM和主流DDR对比，相同容量的SRAM的价格是DDR的数倍以上。参考下图，SRAM存储一个bit需要用掉6个晶体管，而DDR只需要一个，DDR的成本优势不言自明。</p>
+<center>
+<table width="90%">
+    <tbody align="center">
+        <tr>
+            <td><img src="/sources/articles/architecture/CPU-Cache漫谈/img/SRAM.jpg" width="350" /></td>
+            <td><img src="/sources/articles/architecture/CPU-Cache漫谈/img/DRAM.svg" width="350" /></td>
+        </tr>
+        <tr>
+            <td>(1) SRAM 1 bit</td>
+            <td>(2) DRAM 1 bit</td>
+        </tr>
+    </tbody>
+</table>
+</center>
+<p>世上总不缺有钱人，价格并不是限制高速存储被用作主存的唯一因素，功耗和容量（集成度）也极大限制了高速存储用于主存的可能。还是以SRAM和DDR做对比，SRAM存储一个bit需要6个晶体管，而DDR仅需要一个，虽不严谨，但一般而言，更多的器件意味着更高的功耗。在大量读写操作下，其动态功耗也更高。存储单个bit需要更多的晶体管也意味着集成度的下降，单从晶体管数量考虑，在使用相同的晶圆面积的前提下，DDR的容量是SRAM的6倍以上。因此，从价格、功耗和容量等角度考虑，目前直接使用高速存储器件作为主存以实现处理器读写数据的性能提升是一件不太现实的事。</p>
+
+<p>在无法直接使用高速存储器作为计算机系统的主存的情况下，如何提高处理器的处理效率呢？当上帝关上了这扇门，一定会为你打开一扇窗。程序的局部性原理：在一段时间内，一个程序仅会执行程序的某一部份，其访存的行为集中在某一段地址内。进一步，程序的局部性原理可以分为时间局部性和空间局部性。</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>时间局部性：被执行的指令和被访问的内存极有可能在短时间内被重复执行和访问。例：for循环代码的执行。
+空间局部性：被执行的指令和被访问的内存附近的指令和内存，在短时间很有可能被访问。例：数组数据的处理。
+</code></pre></div></div>
+<p>程序的局部性原理意味，即使只把一小段正在运行的“部分程序”所需要的指令和数据放到高速存储器件中便能有效的提高运行数据。这就好比一个需要手工焊接电路的工程师，如果每个元件都从器件柜上单独去找，工作效率会非常低，但把常用的元件放到随手可得的器件盒中，便能极大减少工程师在器件柜和工作台间奔走的时间。对于处理器而言，这个“随手可得的器件盒”就是大名鼎鼎的Lx Cache！</p>
+
+<p>以下是AIDA64采集的一张实测数据图，假设L1 Cache中所有的读操作都直接转换成从Memory直接读取，那直观上读内存相关程序代码的性能将会劣化约</p>
+
+\[\frac{2306.8 \times 66.1}{2306.8 \times 1 + 1357.9 \times 3 + 891.4 \times 15.7 + 92.4 \times 66.1} \approx 5.75\]
+
+<p>这就是Cache的巨大威力!此外，这份数据也很好的印证了程序的局部性原理，纯Cache的支撑的访问量是真实Memory访问量的23倍有余，能满足处理器对数据的大部分访问请求。</p>
+<center><img src="/sources/articles/architecture/CPU-Cache漫谈/img/mem-reference-data.webp" alt="mem-reference-data" width="600" /></center>
+
+<p>总结而言，处理器Cache的必要性来源于如下几点：</p>
+<ul>
+  <li>处理器性能和主存性能之间的巨大差异。</li>
+  <li>高速存储器件的高价格、高功耗和低容量限制。</li>
+  <li>程序执行访存行为具有的空间、时间局部性。</li>
+</ul>
+
+<p>使用Cache的收益：</p>
+<ul>
+  <li>获得性能、数据容量、功耗和价格的折中。在保证存储器容量大，功耗低，成本低的前提下大幅提升计算机系统性能。</li>
+</ul>
+
+<h2 id="2-cache的基本原理">2 Cache的基本原理</h2>
+
+<p>Cache本质上需要解决的问题是如何尽可能避免处理器直接访问速度较慢主存。一般而言现代计算机的CPU cache结构都是多级的且涉及到多CPU，但为了便于研究Cache的基本原理，本章只讨论单CPU、单级Cache的情形。</p>
+
+<center>
+<table width="90%">
+    <tbody align="center">
+        <tr>
+            <td><img src="/sources/articles/architecture/CPU-Cache漫谈/img/cache-basic.svg" width="200" /></td>
+        </tr>
+        <tr>
+            <td>单CPU、单级cache结构</td>
+        </tr>
+    </tbody>
+</table>
+</center>
+
+<p>要说清Cache的基本原理，需要回答如下的几个问题</p>
+
+<ol>
+  <li>Cache中的资源要如何组织与主存的内存资源相对应？</li>
+  <li>主存中的数据何时被添加到Cache中？</li>
+  <li>如何判断处理器需要的数据是否在Cache中？</li>
+  <li>Cache被填满后该怎样选择需要替换的数据？</li>
+  <li>当处理器对Cache中的数据做写操作后，需要如何处理？</li>
+</ol>
+
+<h3 id="21-q1-cache中的资源要如何组织与主存的内存资源相对应">2.1 Q1: Cache中的资源要如何组织与主存的内存资源相对应？</h3>
+
+<p>从程序的空间局部性原理出发，Cache和主存间交换数据的最小大小不应是字节，当出现Cache miss（CPU所需要的数据不在Cache中，需要从主存中加载）时应当将CPU当前访问地址附近的数据一并加载到Cache中，以备后续的访问。由此启发，可以将Cache和主存分割成大小相同的连续内存块，Cache每次从主存中读写的最小单位就是这样一个连续内存块，这个块就是所谓的Cache Line，Cache-line的Size一般为16、32或64等等。后文为了简化，统一将1个Cache-line称为1个block。</p>
+
+<p>出于成本、功耗、集成度等因素的考虑，Cache的容量是远小于主存的，这点决定了Cache中block到主存中block的映射关系只会是一对多的映射，也就是说Cache中的每个block都与主存中的多个block相对应。但从主存block角度看，这种映射关系将并非是唯一的，主存block可以固定映射到cache的特定block，也可以映射到其中的某些block，还可以是映射到cache中的任意block，采用这三种映射方式的Cache分别被称为直接映射高速缓存(direct-mapped cache)、组相联高速缓存(set associative cache)和全相联高速缓存(fully associative cache)。实际上这三种映射都是组相联(set associative，这里的set指的是Cache中的一组block)的设计策略，直接映射高速缓存相当于每个set只有一个block，全相联高速缓存相当于整个Cache只有一个set。对于组相联高速缓存，一般而言会通过求余的决定主存的block被放到哪个set中</p>
+
+\[(Set \; index) = (Block \; address) \; \mathbf{MOD} \; (Number \; of \; sets \; in \; cache)\]
+
+<p>如果每个set中有n个block，则这种组相联会被称为n路组相联(n-ways set associative)，主存中的block可以被存放在对应set的任意路中。也许上面的文字描述并不直观，通过下图可以比较直观的理解block、set和way以及它们之间的关系</p>
+
+<center>
+<table width="90%">
+    <tbody align="center">
+        <tr>
+            <td><img src="/sources/articles/architecture/CPU-Cache漫谈/img/set-associative.svg" width="800" /></td>
+        </tr>
+        <tr>
+            <td>不同组相联策略的对比</td>
+        </tr>
+    </tbody>
+</table>
+</center>
+
+<p>事实上Cache的block大小、set数、way数配置都会对Cache的性能产生影响，不过这是单独要讨论的内容，这里不进行讨论。</p>
+
+<h3 id="22-q2主存中的数据何时被添加到cache中">2.2 Q2：主存中的数据何时被添加到Cache中？</h3>
+
+<p>这个问题的答案比较直观，当CPU需要的数据不在缓存中时主存中的数据需要被加载。不妨再深入一些，哪些情况会导致CPU需要的数据会不在Cache中（也就是cache miss）呢？对于cache miss的原因，大抵可以分为三类：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1. 必然的cache miss：CPU在第一次请求某个数据时，这个数据必然不可能在cache中，因此必然会经历从主存加载到cache的这一过程。这种cache miss具有必然性，无论怎样优化cache机制、增加cache size，这类cache miss都是必须的。
+
+2. 由于cache size不足导致的cache miss：cache的容量是有限的，就像一辆座位数固定的大巴，满员后必须有人下车，后来的人才有座位。当cache size满足不了程序运行时所需要访问的数据，那必然会有block被踢出，当程序再次想要访问这份被踢出的数据时，对应的block需要重新被加载，因此会照成cache miss。
+
+3. 由于数据冲突导致的cache miss：如果cache的组织方式不是全联接的，cache中的一个block必然会与多个主存中的多个block相对应，这意味着会出现多个主存的block被映射到同一个set，进而发生冲突，必须踢出先加载的block来加载目前需要的block，当被踢出的block再次被需要时，这会产生一次cache miss
+</code></pre></div></div>
+
+<p>cache miss的优化是CPU性能优化的重要一环，了解cache miss产生的原因能帮助寻找优化手段和方法，不过这是后面的内容了，这里也不做过多的讨论。</p>
+
+<h3 id="23-q3-如何判断处理器需要的数据是否在cache中">2.3 Q3 如何判断处理器需要的数据是否在Cache中？</h3>
+
+<p>如何高效的判断CPU所需的数据是否在Cache中是Cache设计的重要内容。先来看看CPU侧提供了什么信息？一般而言CPU发出的访存指令是使用的是虚拟地址，这个虚拟地址经过TLB（Translation Lookaside Buffer）或者MMU后会变为物理地址，也就是说Cache可以接受的信息有两个，一个是物理地址，一个是虚拟地址。</p>
+
+<h2 id="附录一些小实验">附录：一些小实验</h2>
+
+<ul>
+  <li>Linux下获取cache的信息方法：
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">cat</span> /sys/devices/system/cpu/cpu0/cache/&lt;index&gt;/&lt;info node&gt;
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h2 id="reference">Reference</h2>
+
+<p>[1] John L. Hennessy, David A. Patterson: <strong><em>Computer Architecture: A Quantitative Approach</em></strong></p>
+
+<p>[2] <a href="https://www.synopsys.com/designware-ip/technical-bulletin/automotive-ddr-dram.html">Synopsys: Understanding Automotive DDR DRAM</a></p>
+
+            </div>
+		</div>
+	</div>
+  </body>
+</html>

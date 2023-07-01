@@ -49,6 +49,14 @@
     } ,
   
     {
+      "title"    : "reading-note",
+      "category" : "",
+      "tags"     : "",
+      "url"      : "https://nr-linux.com/reading-note",
+      "date"     : "1996-01-01 00:00:00 +0800"
+    } ,
+  
+    {
       "title"    : "performance",
       "category" : "",
       "tags"     : "",
